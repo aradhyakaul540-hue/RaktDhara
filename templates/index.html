@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dilemmas Digital Solutions - Official</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;800&display=swap" rel="stylesheet">
+
+<style>
+
+*{
+ margin:0;
+ padding:0;
+ box-sizing:border-box;
+ font-family:"Poppins",sans-serif;
+}
+
+body{
+ background:#000;
+ color:white;
+ overflow-x:hidden;
+}
+
+/* BRAND COLORS */
+:root{
+ --neon:#3feb0f;
+ --black:#000000;
+}
+
+/* NAV */
+nav{
+ position:fixed;
+ top:0;
+ left:0;
+ width:100%;
+ padding:22px 8%;
+ background:rgba(0,0,0,.6);
+ backdrop-filter:blur(25px);
+ border-bottom:1px solid rgba(255,255,255,.1);
+ display:flex;
+ justify-content:space-between;
+ align-items:center;
+ z-index:9999;
+}
+
+nav h2{
+ color:var(--neon);
+ font-weight:800;
+ letter-spacing:1px;
+
+}
+
+nav a{
+ color:white;
+ text-decoration:none;
+ margin-left:25px;
+ font-weight:300;
+ transition:.3s;
+}
+
+nav a:hover{
+ color:var(--neon);
+}
+
+/* HERO */
+.hero{
+ height:100vh;
+ padding:0 10%;
+ display:flex;
+ justify-content:center;
+ flex-direction:column;
+ background:radial-gradient(circle at center,rgba(63,235,15,.15) 0%,#000 70%);
+ position:relative;
+ overflow:hidden;
+}
+
+.hero h1{
+ font-size:70px;
+ font-weight:800;
+ line-height:1.1;
+ animation:fadeDown 1.4s forwards;
+}
+
+.hero h1 span{
+ color:var(--neon);
+
+}
+
+.hero p{
+ margin-top:25px;
+ font-size:19px;
+ opacity:.85;
+ width:60%;
+ animation:fadeUp 1.4s forwards;
+}
+
+button{
+ margin-top:50px;
+ padding:15px 45px;
+ border:none;
+ font-size:18px;
+ font-weight:700;
+ background:var(--neon);
+ border-radius:7px;
+ cursor:pointer;
+ transition:.3s;
+ animation:fadeUp 1.3s forwards;
+}
+
+button:hover{
+ transform:scale(1.08);
+ box-shadow:0 0 30px var(--neon);
+}
+
+
+/* SCROLL SECTIONS */
+
+section{
+ padding:130px 10%;
+}
+
+/* TITLES */
+section h2{
+ font-size:50px;
+ color:var(--neon);
+ font-weight:700;
+ margin-bottom:20px;
+}
+
+/* CONTENT */
+section p{
+ opacity:.8;
+ font-size:19px;
+ margin-top:10px;
+ line-height:30px;
+}
+
+/* LIST */
+ul{
+ margin-top:25px;
+ line-height:38px;
+ font-size:19px;
+}
+
+
+
+/* ===== BIG REAL ANIMATIONS ===== */
+
+.reveal{
+ opacity:0;
+ transform:translateY(70px) scale(.92);
+ transition:all .9s ease;
+}
+
+.reveal.active{
+ opacity:1;
+ transform:translateY(0px) scale(1);
+}
+
+
+
+/* KEYFRAMES */
+
+@keyframes fadeDown{
+ from{opacity:0; transform:translateY(-50px)}
+ to{opacity:1; transform:translateY(0)}
+}
+
+@keyframes fadeUp{
+ from{opacity:0; transform:translateY(50px)}
+ to{opacity:1; transform:translateY(0)}
+}
+
+
+/* FOOTER */
+footer{
+ padding:55px;
+ text-align:center;
+ opacity:.55;
+ margin-top:110px;
+}
+
+</style>
+
+</head>
+<body>
+
+<nav>
+<img src="{{ url_for('static', filename='images1/logos.jpeg') }}" alt="Logo" class="brand-logo">
+<div>
+<a href="#">Home</a>
+<a href="#">Services</a>
+<a href="#">Portfolio</a>
+<a href="#">Contact</a>
+</div>
+</nav>
+
+
+
+<!-- HERO -->
+<div class="hero">
+<h1>Welcome to <span>Dilemmas Digital Solutions</span></h1>
+<p>Your Growth-Driven Digital Partner — Building Brands for the Modern World with Strategy, Creativity and Precision.</p>
+
+<button>Start Your Growth</button>
+</div>
+
+
+
+
+<section class="reveal">
+<h2>About Us</h2>
+<p>
+Dilemmas Digital Solutions is a full-stack creative and marketing agency built for brands that want to grow faster,
+scale smarter, and lead with confidence in today’s digital world.
+</p>
+</section>
+
+
+<section class="reveal">
+<h2>What Makes Us Different</h2>
+
+<ul>
+<li><b>Strategic Approach</b> — data, psychology and creativity blended together</li>
+<li><b>Conversion-Focused Execution</b></li>
+<li><b>Human-Centered Creativity</b></li>
+<li><b>Growth Systems That Scale</b></li>
+</ul>
+
+</section>
+
+
+<section class="reveal">
+<h2>What We Deliver</h2>
+
+<ul>
+<li>Digital Marketing</li>
+<li>Performance Marketing</li>
+<li>Graphic Design</li>
+<li>Video Editing</li>
+<li>Website Design & Development</li>
+</ul>
+
+</section>
+
+
+
+<section class="reveal">
+<h2>Your Vision, Our Execution</h2>
+<p>
+Let’s move your ideas from concept to conversion — with clarity, precision and powerful results.
+</p>
+</section>
+
+
+
+<footer>
+© 2025 — Dilemmas Digital Solutions
+</footer>
+
+<script>
+
+function reveal(){
+ let reveals=document.querySelectorAll(".reveal");
+ for(let i=0;i<reveals.length;i++){
+ let windowHeight=window.innerHeight;
+ let elementTop=reveals[i].getBoundingClientRect().top;
+ if(elementTop < windowHeight - 150){
+ reveals[i].classList.add("active")
+ }
+}
+}
+
+window.addEventListener("scroll",reveal);
+reveal();
+
+</script>
+
+</body>
+</html>

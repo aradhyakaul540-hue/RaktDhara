@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <title>Thank You - Raktadhara</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    body {
+      background: linear-gradient(135deg, #c80f2e, #ff6b88);
+      height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Montserrat', sans-serif;
+      overflow: hidden;
+      position: relative;
+    }
+    .thank-box {
+      background: rgba(255,255,255,0.95);
+      padding: 60px 40px;
+      border-radius: 20px;
+      text-align: center;
+      box-shadow: 0 20px 50px rgba(0,0,0,0.2);
+      animation: popIn 1s ease;
+      max-width: 600px;
+    }
+    .thank-box h1 {
+      font-size: 2.5rem;
+      font-weight: 800;
+      color: #c80f2e;
+      margin-bottom: 15px;
+      text-transform: uppercase;
+    }
+    .thank-box h2 {
+      font-size: 1.8rem;
+      font-weight: 700;
+      color: #333;
+      margin-bottom: 20px;
+    }
+    .thank-box p {
+      font-size: 1.1rem;
+      color: #555;
+      margin-bottom: 25px;
+    }
+    .btn-home {
+      background: linear-gradient(90deg,#ff512f,#dd2476);
+      border: none;
+      padding: 14px 28px;
+      font-weight: bold;
+      font-size: 1rem;
+      color: #fff;
+      border-radius: 30px;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    .btn-home:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+    }
+    .heart {
+      font-size: 3rem;
+      color: #e63946;
+      animation: heartbeat 1.5s infinite;
+    }
+
+    /* Animations */
+    @keyframes popIn {
+      0% { transform: scale(0.8); opacity: 0; }
+      100% { transform: scale(1); opacity: 1; }
+    }
+    @keyframes heartbeat {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.3); }
+    }
+
+    /* Confetti */
+    .confetti {
+      position: absolute;
+      width: 10px;
+      height: 10px;
+      background: gold;
+      top: -10px;
+      animation: fall 5s linear infinite;
+    }
+    @keyframes fall {
+      0% { transform: translateY(0) rotate(0deg); opacity: 1; }
+      100% { transform: translateY(110vh) rotate(720deg); opacity: 0; }
+    }
+  </style>
+</head>
+<body>
+  <div class="thank-box">
+    <div class="heart">❤️</div>
+    <h1>THANK YOU!</h1>
+    <h2>You’re a Lifesaver 🚑</h2>
+    <p>By saying YES, you didn’t just agree to donate blood —  
+       you became a <b>part of the REVOLUTION</b> that saves lives every single day. 🌍✨</p>
+    <a href="/" class="btn btn-home">🏠 Back to Home</a>
+  </div>
+
+  <!-- Confetti Generator -->
+  <script>
+    function createConfetti() {
+      const confetti = document.createElement("div");
+      confetti.classList.add("confetti");
+      document.body.appendChild(confetti);
+      confetti.style.left = Math.random() * window.innerWidth + "px";
+      confetti.style.background = `hsl(${Math.random()*360}, 100%, 50%)`;
+      confetti.style.animationDuration = (3 + Math.random()*2) + "s";
+      setTimeout(() => confetti.remove(), 5000);
+    }
+    setInterval(createConfetti, 200);
+  </script>
+</body>
+</html>

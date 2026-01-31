@@ -1,0 +1,656 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Raktdhara — Register</title>
+
+  <!-- Google font -->
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;600;700;900&display=swap" rel="stylesheet">
+
+  <!-- Bootstrap -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+  <!-- Animate.css -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
+
+  <style>
+:root{
+  --bg:#07121a;
+  --card:#071821;
+  --muted:#9aa6ab;
+  --teal:#00b3b3;
+  --blood:#c80f2e;
+}
+*{ box-sizing: border-box; }
+body{ 
+  margin:0; 
+  font-family:'Montserrat',sans-serif; 
+  background: linear-gradient(180deg,#07121a 0%, #041119 100%); 
+  color:#e9f7f7; 
+  display:flex; 
+  flex-direction:column; 
+  min-height:100vh; 
+  overflow-x:hidden;
+}
+.content{ flex:1; position:relative; z-index:1; }
+html { scroll-behavior: smooth; }
+.bubble { position: absolute; bottom: -120px; width: 40px; height: 40px; background: radial-gradient(circle at 30% 30%, rgba(255,255,255,.25), rgba(200,15,46,0.28)); border-radius: 50%; animation: rise 12s infinite ease-in; filter: blur(.2px); pointer-events:none; z-index:0; }
+.bubble:nth-child(1){ left:10%; animation-duration:13s; }
+.bubble:nth-child(2){ left:25%; animation-duration:16s; width:28px; height:28px; }
+.bubble:nth-child(3){ left:45%; animation-duration:10s; width:50px; height:50px; }
+.bubble:nth-child(4){ left:68%; animation-duration:15s; }
+.bubble:nth-child(5){ left:85%; animation-duration:9s; width:32px; height:32px; }
+@keyframes rise { 0% { transform: translateY(0) scale(1); opacity: 1; } 100% { transform: translateY(-1400px) scale(1.5); opacity: 0; } }
+.topbar{ background: rgba(2,10,12,.55); backdrop-filter: blur(6px); border-bottom: 1px solid rgba(255,255,255,0.04); padding:12px 0; position:sticky; top:0; z-index:40; }
+.brand-row{ display:flex; align-items:center; gap:12px; }
+.brand-logo{ width:150px; height:150px; border-radius:80%; object-fit:cover; }
+.brand-title{ font-weight:800; font-size:1.15rem; color:#ffffff }
+.brand-title .rakt{color:#fff;}
+.brand-title .dhara{color:var(--blood)}
+.hero{ min-height:calc(100vh - 88px); display:flex; align-items:center; padding:48px 0; }
+.quote{ font-size:clamp(22px, 3.2vw, 36px); font-weight:700; color:#fff; line-height:1.05; margin-bottom:6px; animation: pulse 2.2s infinite; }
+@keyframes pulse { 0%{ transform: scale(1);} 50%{ transform: scale(1.02);} 100%{ transform: scale(1);} }
+.quote small{ display:block; font-weight:600; color:var(--muted); margin-top:8px; font-size:1rem; }
+.card-panel{ background: linear-gradient(180deg, rgba(6,18,23,.9), rgba(8,20,25,.85)); border-radius:16px; padding:0; overflow:visible; border:1px solid rgba(255,255,255,0.04); box-shadow: 0 18px 50px rgba(0,0,0,.6); transition: transform 0.3s ease; }
+.card-panel:hover{ transform: translateY(-4px); }
+.register-body{ padding:26px; }
+.form-title{ color:var(--blood); font-weight:800; margin-bottom:8px; }
+.form-sub{ color:var(--muted); margin-bottom:18px; }
+.form-control, .form-select{ background: rgba(255,255,255,0.03); color:#eaf6f6; border:1px solid rgba(255,255,255,0.06); border-radius:10px; padding:.65rem .9rem; transition: all 0.25s ease; }
+.form-control::placeholder{ color:#9fb1b7 }
+.form-control:focus{ border-color: var(--blood); box-shadow:0 0 15px rgba(200,15,46,.45); transform: scale(1.03); }
+.form-select option{ color:black; }
+.submit-btn{ background: linear-gradient(90deg,var(--blood), #ff6b88); border:none; color:#fff; font-weight:800; padding:.85rem; border-radius:12px; box-shadow:0 10px 28px rgba(200,15,46,.25); transition: all 0.35s ease; transform-origin: center; }
+.submit-btn:hover{ transform: rotate(-3deg) scale(1.06); background: linear-gradient(45deg, #ff0066, #ffcc00); }
+footer{ background:#041119; padding:50px 0; border-top:1px solid rgba(255,255,255,0.08); }
+footer h5{ font-weight:800; color:var(--blood); }
+.list-group-flush { max-height:400px; overflow-y:auto; scrollbar-width: thin; scrollbar-color: #c80f2e #07121a; }
+.list-group-flush::-webkit-scrollbar { width: 8px; }
+.list-group-flush::-webkit-scrollbar-track { background: #07121a; border-radius: 10px; }
+.list-group-flush::-webkit-scrollbar-thumb { background-color: #c80f2e; border-radius: 10px; border: 2px solid #07121a; }
+.list-group-item.bg-gradient { background: linear-gradient(135deg, rgba(200,15,46,0.2), rgba(0,179,179,0.2)); border-radius:12px; box-shadow:0 8px 18px rgba(0,0,0,0.5); color:#fff; margin-bottom:8px; padding:12px; }
+.list-group-item strong { color:#ff4d6d; font-size:1.1rem; }
+.list-group-item span { font-weight:bold; font-size:1.05rem; }
+.list-group-item small { color:#a0c4ff; font-size:.85rem; }
+.splash { position: fixed; top:0; left:0; right:0; bottom:0; background:#fff; display:flex; flex-direction:column; align-items:center; justify-content:center; z-index:9999; animation: fadeOut 1s ease forwards; animation-delay: 6s; }
+@keyframes fadeOut { to { opacity:0; visibility:hidden; } }
+.lotus-container { position: relative; display: inline-block; }
+.lotus { width:280px; transform: scale(0); opacity:0; animation: lotusBloom 2s ease-out forwards; animation-delay: 0.5s; }
+@keyframes lotusBloom { 0% { transform: scale(0); opacity:0; } 60% { transform: scale(1.1); opacity:1; } 100% { transform: scale(1); opacity:1; } }
+.droplet { width:70px; position:absolute; left:37%; top:-120px; opacity:0; animation: dropletFall 2s ease-out forwards; animation-delay: 2s; }
+@keyframes dropletFall { 0% { top:-120px; opacity:1; } 100% { top:60px; opacity:1; transform: scale(1); } }
+.ripple { position:absolute; top:42%; width:150px; height:150px; border-radius:50%; border:3px solid rgba(179,0,0,0.4); opacity:0; transform: scale(0.5); animation: rippleExpand 1s ease-out forwards; animation-delay: 3.2s; }
+@keyframes rippleExpand { 0% { transform: scale(0.5); opacity:0.6; } 100% { transform: scale(2); opacity:0; } }
+.title { margin-top:30px; font-size:3rem; font-weight:900; opacity:0; display:inline-block; white-space:nowrap; overflow:hidden; border-right:3px solid #b30000; animation: typing 2.5s steps(10) forwards; animation-delay: 3.5s; }
+.title .rakt { color:#000000; }
+.title .dhara { color:#b30000; }
+@keyframes typing { from { width:0; opacity:1; } to { width:10ch; opacity:1; } }
+body .content, body header, body footer { opacity:0; transition: opacity 1s ease; }
+body.splash-done .content, body.splash-done header, body.splash-done footer { opacity:1; }
+body {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+.content { flex: 1; }  
+.team-area { margin-top: auto; padding: 80px 0; background: #041119; }
+.team-area {
+  position: relative;
+  padding: 80px 0;   
+  background: #041119; 
+}
+.team-particles {
+  position:absolute; inset:0; pointer-events:none; overflow:hidden;
+}
+.team-particles span {
+  position:absolute; width:8px; height:8px; border-radius:50%;
+  background: rgba(200,15,46,0.35);
+  animation: drift 12s linear infinite;
+}
+.team-particles span:nth-child(odd){ width:10px; height:10px; background: rgba(0,179,179,0.35); }
+@keyframes drift {
+  0% { transform: translateY(0) translateX(0); opacity:.6;}
+  50% { transform: translateY(-60px) translateX(20px); opacity:.9;}
+  100%{ transform: translateY(-120px) translateX(-10px); opacity:.3;}
+}
+.team-card { perspective: 1000px; cursor: pointer; transform-style: preserve-3d; transition: transform .25s ease; }
+.team-card:hover { transform: translateY(-6px) scale(1.02); }
+.team-inner {
+  position: relative;
+  width: 100%;
+  height: 320px;
+  text-align: center;
+  transition: transform 0.8s;
+  transform-style: preserve-3d;
+}
+.team-row {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 2rem;
+}
+.team-card {
+  position: relative;
+  flex: 0 0 300px; 
+  max-width: 100%;
+  margin-bottom: 2rem;
+  perspective: 1000px;
+  cursor: pointer;
+  z-index: 1; 
+}
+.team-inner {
+  position: relative;
+  width: 100%;
+  height: 320px;
+  text-align: center;
+  transition: transform 0.8s;
+  transform-style: preserve-3d;
+}
+.team-card:hover .team-inner {
+  transform: rotateY(180deg);
+}
+.team-front, .team-back {
+  position: relative;
+  inset: 0;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  border-radius: 16px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+  box-shadow: 0 8px 25px rgba(0,0,0,0.4);
+}
+.team-front { background: rgba(255,255,255,0.05); }
+.team-back  { background: rgba(200,15,46,0.15); transform: rotateY(180deg); }
+.team-photo { width: 120px; height: 120px; border-radius: 50%; object-fit: cover; border: 3px solid var(--blood); }
+.team-name { color: var(--blood); font-weight: 800; margin-top: 10px; font-size:1.1rem; letter-spacing:.3px; }
+.team-role { color: var(--muted); font-size: 0.95rem; }
+.team-contact a { display: inline-flex; align-items: center; gap: 8px; margin: 6px 10px; font-size: .95rem; color: var(--teal); text-decoration: none; padding:6px 10px; border-radius:10px; background: rgba(0,179,179,.08); transition: transform .2s ease; }
+.team-contact a:hover { transform: translateY(-2px) scale(1.04); }
+.reveal { opacity:0; transform: translateY(24px) scale(0.96); transition: all .6s ease; }
+.reveal.visible { opacity:1; transform: translateY(0) scale(1); }
+@media (max-width: 991px) {
+  .team-card { flex: 0 0 45%; }
+}
+@media (max-width: 767px) {
+  .team-card { flex: 0 0 90%; }
+}
+.slide-form {
+  position: relative;
+  min-height: 500px; 
+  overflow: hidden;   
+  z-index: 2;
+}
+.step {
+  display: none; 
+  flex-direction: column;
+  max-height: 600px; 
+  overflow-y: auto;
+}
+.step.active {
+  display: flex; 
+}
+.step-content {
+  flex: 1; 
+  overflow-y: auto;
+  padding-right: 5px; 
+}
+.form-footer {
+  margin-top: auto; 
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+}
+#donorRegisterForm .next {
+  background: var(--blood) !important;
+  color: #fff;
+  border: none;
+}
+#donorRegisterForm .next:hover {
+  background: linear-gradient(45deg, #ff0066, #ff3333);
+}
+</style>
+</head>
+<body id="top">
+  <!-- [SPLASH SCREEN, HEADER, HERO - ALL UNCHANGED] -->
+  <div class="splash">
+    <div class="lotus-container">
+      <img src="{{ url_for('static', filename='images/lotus.png') }}" class="lotus" alt="Lotus">
+      <img src="{{ url_for('static', filename='images/droplet.png') }}" class="droplet" alt="Blood Droplet">
+    </div>
+    <div class="ripple"></div>
+    <div class="title"><span class="rakt">Rakt</span><span class="dhara">Dhara</span></div>
+  </div>
+
+  <!-- [HEADER, REQUEST BLOOD FORM, NOTICE BOARD - ALL UNCHANGED] -->
+  <header class="topbar navbar navbar-expand-md navbar-dark animate__animated animate__fadeInDown">
+    <div class="container">
+      <div class="brand-row">
+        <img src="{{ url_for('static', filename='images/logo.jpeg') }}" alt="Logo" class="brand-logo">
+        <div>
+          <div class="brand-title"><span class="rakt">Rakt</span><span class="dhara">Dhara</span></div>
+          <div style="font-size:.85rem; color:var(--muted)">Donate • Save • Smile</div>
+        </div>
+      </div>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarMenu">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarMenu">
+        <ul class="navbar-nav ms-auto text-center mt-3 mt-md-0">
+          <li class="nav-item"><a class="nav-link btn btn-danger btn-sm mx-1" href="#top">Home</a></li>
+          <li class="nav-item"><a class="nav-link btn btn-danger btn-sm mx-1" href="/login">User</a></li>
+          <li class="nav-item"><a class="nav-link btn btn-warning btn-sm mx-1" href="/admin">Admin</a></li>
+          <li class="nav-item"><a class="nav-link btn btn-success btn-sm mx-1" href="/donor_status">Donor Status</a></li>
+          <li class="nav-item"><a class="nav-link btn btn-success btn-sm mx-1" href="/feedback">Feedback</a></li>
+          <li class="nav-item"><a class="nav-link btn btn-danger btn-sm mx-1" href="#team">Our Team</a></li>
+        </ul>
+      </div>
+    </div>
+  </header>
+
+  <main class="hero content">
+    <div class="container">
+      <div class="row g-5 align-items-start">
+        <div class="col-lg-6 animate__animated animate__fadeInLeft">
+          <div class="quote">“Every drop of blood is a heartbeat of hope”</div>
+          <small class="d-block" style="color:var(--muted); margin-bottom:18px">— Mother Teresa</small>
+          <div class="card-panel mb-4">
+            <div class="register-body">
+              <div class="form-title">Request Blood</div>
+              <div class="form-sub">Submit your urgent need</div>
+              <form method="POST" action="/request_blood" class="confetti-form">
+                <div class="mb-2"><input class="form-control" name="requester_name" type="text" placeholder="Your Name" required></div>
+                <div class="row g-2 mb-2">
+                  <div class="col-6">
+                    <select class="form-select" name="blood_group" required>
+                      <option value="">Blood group</option>
+                      <option>A+</option><option>A-</option>
+                      <option>B+</option><option>B-</option>
+                      <option>AB+</option><option>AB-</option>
+                      <option>O+</option><option>O-</option>
+                    </select>
+                  </div>
+                  <div class="col-6"><input class="form-control" name="location" type="text" placeholder="Location" required></div>
+                </div>
+                <div class="mb-2"><input class="form-control" name="phone" type="text" placeholder="Phone number" required></div>
+                <div class="mb-2"><input class="form-control" name="email" type="email" placeholder="Email" required></div>
+                <div class="mb-3"><textarea class="form-control" name="message" placeholder="Message (optional)"></textarea></div>
+                <div class="d-grid"><button class="submit-btn" type="submit">Submit Request</button></div>
+              </form>
+            </div>
+          </div>
+          <div class="card-panel animate__animated animate__fadeInUp">
+            <div class="register-body">
+              <div class="form-title">Notice Board</div>
+              <div class="form-sub">Latest Blood Requests</div>
+              {% if blood_requests %}
+                <ul class="list-group list-group-flush">
+                  {% for req in blood_requests %}
+                    <li class="list-group-item bg-gradient">
+                      <strong>{{ req.requester_name }}</strong> needs 
+                      <span>{{ req.blood_group }}</span><br>
+                      📍 {{ req.location }} | 📞 {{ req.phone }}<br>
+                      <small>{{ req.created_at.strftime("%d %b %Y %H:%M") }}</small>
+                    </li>
+                  {% endfor %}
+                </ul>
+              {% else %}
+                <p class="text-muted">No current requests.</p>
+              {% endif %}
+            </div>
+          </div>
+        </div>
+
+        <!-- ✅ FIXED DONOR REGISTRATION FORM -->
+        <div class="col-lg-6 animate__animated animate__fadeInRight">
+          <div class="card-panel">
+            <div class="register-body">
+              <div class="form-title">Register to Donate</div>
+              <div class="form-sub">Fast · Secure · Verified</div>
+              
+              <!-- 🔥 FIXED: Full form submits to /register -->
+              <form id="donorRegisterForm" method="POST" action="/register" class="confetti-form slide-form">
+                <!-- STEP 1 - UNCHANGED -->
+                <div class="step active">
+                  <div class="mb-2">
+                    <input class="form-control" name="name" type="text" placeholder="Full name" required>
+                  </div>
+                  <div class="mb-2">
+                    <select class="form-control" id="occupation" name="occupation" required>
+                      <option value="" disabled selected>Select your occupation</option>
+                      <option value="Student">Student</option>
+                      <option value="Businessman">Businessman</option>
+                      <option value="Teacher">Teacher</option>
+                      <option value="Professor">Professor</option>
+                      <option value="Doctor">Doctor</option>
+                      <option value="Self-Employed">Self Employed</option>
+                      <option value="Homemaker">Homemaker</option>
+                      <option value="Farmer">Farmer</option>
+                      <option value="Politician">Politician</option>
+                      <option value="Government Employee">Government Employee</option>
+                      <option value="Other">Other</option>
+                    </select>
+                  </div>
+                  <div class="mb-2">
+                    <input class="form-control" name="email" type="email" placeholder="Email" required>
+                  </div>
+                  <div class="mb-2">
+                    <input class="form-control" name="phone" type="text" placeholder="Phone number" required>
+                  </div>
+                  <div class="mb-2">
+                    <input class="form-control" name="dob" type="date" placeholder="Date of Birth" required>
+                  </div>
+                  <div class="mb-2">
+                    <select class="form-select" name="blood_group" required>
+                      <option value="" disabled selected>Select Blood Group</option>
+                      <option value="A+">A+</option>
+                      <option value="A-">A-</option>
+                      <option value="B+">B+</option>
+                      <option value="B-">B-</option>
+                      <option value="AB+">AB+</option>
+                      <option value="AB-">AB-</option>
+                      <option value="O+">O+</option>
+                      <option value="O-">O-</option>
+                    </select>
+                  </div>
+                  <div class="mb-3">
+                    <input class="form-control" name="permanent_address" type="text" placeholder="Permanent address" required>
+                  </div>
+                  <div class="form-check mb-2">
+                    <input type="checkbox" class="form-check-input" id="ageConsent" required>
+                    <label for="ageConsent" class="form-check-label">I confirm I am above 18 years old.</label>
+                  </div>
+                  <div class="form-check mb-3">
+                    <input type="checkbox" class="form-check-input" id="donationConsent" required>
+                    <label class="form-check-label" for="donationConsent">
+                      Are you willing to donate blood and become part of the revolution today and in the future?
+                    </label>
+                  </div>
+                  <div class="d-flex justify-content-end mt-2">
+                    <button type="button" class="btn btn-nav next">Next</button>
+                  </div>
+                </div>
+
+                <!-- STEP 2 - ✅ FIXED FIELDS -->
+                <div class="step">
+                  <div class="row g-2 mb-2"> 
+           
+                    <div class="col-4">
+                      <select class="form-control" name="gender" required>
+                        <option value="">Gender</option>
+                        <option>Male</option>
+                        <option>Female</option>
+                        <option>Other</option>
+                      </select>
+                    </div>
+                    <div class="col-4">
+                      <input type="number" step="0.1" class="form-control" name="weight" placeholder="Weight (kg)" required>
+                    </div>
+                  </div>
+                  <div class="mb-2">
+                    <input class="form-control" name="aadhar_number" placeholder="Aadhar Number (12 digits)" required>
+                  </div>
+                  <div class="mb-2">
+                    <input class="form-control" name="whatsapp_number" id="whatsapp_number" placeholder="WhatsApp Number" required>
+                  </div>
+                  <div class="mb-2">
+                    <input class="form-control" name="travel_history" placeholder="Recent Travel History">
+                  </div>
+                  <div class="mb-2">
+                    <input class="form-control" name="current_location" placeholder="Current Location">
+                  </div>
+                  <div class="mb-3">
+                    <textarea class="form-control" name="health_condition" placeholder="Health condition"></textarea>
+                  </div>
+                  <!-- 🔥 FIXED: Correct field name & casing -->
+                  <div class="mb-3">
+                    <textarea class="form-control" name="medications_if_any" placeholder="Medication (if any)"></textarea>
+                  </div>
+                  
+                  <!-- 🔥 BACK BUTTON -->
+                  <div class="form-footer d-flex justify-content-between">
+                    <button type="button" class="btn btn-secondary prev">Back</button>
+                  </div>
+                  
+                  <!-- 🔥 FIXED: SUBMIT BUTTON - SENDS FULL FORM TO /register -->
+                  <div class="d-grid mt-2">
+                    <button type="submit" class="submit-btn">Register & Send OTP</button>
+                  </div>
+                </div>
+              </form>
+            </div>
+          </div>
+          <div style="color:var(--muted); font-size:.9rem; margin-top:8px">
+            By registering you agree to be contacted for donation requests.
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- [TEAM SECTION & FOOTER - UNCHANGED] -->
+ 
+<section id="team" class="team-area">
+  <div class="team-particles" aria-hidden="true">
+    <span style="left:10%; bottom:10%"></span>
+    <span style="left:25%; bottom:20%"></span>
+    <span style="left:40%; bottom:15%"></span>
+    <span style="left:60%; bottom:18%"></span>
+    <span style="left:75%; bottom:8%"></span>
+    <span style="left:85%; bottom:22%"></span>
+    <span style="left:50%; bottom:5%"></span>
+    <span style="left:32%; bottom:27%"></span>
+  </div>
+  <div class="container position-relative">
+    <h5 class="text-center mb-5 animate__animated animate__fadeInUp">Our Team</h5>
+    <div class="row g-4 justify-content-center">
+      <!-- Existing Member 1 -->
+  <div class="col-md-4 reveal">
+    <div class="team-card">
+      <div class="team-inner">
+        <div class="team-front">
+          <img src="{{ url_for('static', filename='images/Developer.jpg') }}" class="team-photo" alt="Aradhya Kaul">
+          <h6 class="team-name">Aradhya Kaul</h6>
+          <p class="team-role">Developer</p>
+        </div>
+        <div class="team-back">
+          <div class="team-contact">
+            <a href="tel:+918091077622"><i class="fas fa-phone"></i> +91 80910 77622</a>
+            <a href="mailto:aradhyakaul20@gmail.com"><i class="fas fa-envelope"></i> aradhyakaul20@gmail.com</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Existing Member 2 -->
+  <div class="col-md-4 reveal">
+    <div class="team-card">
+      <div class="team-inner">
+        <div class="team-front">
+          <img src="{{ url_for('static', filename='images/Marketing_Head.jpeg') }}" class="team-photo" alt="Pawan Choudhary">
+          <h6 class="team-name">Pawan Choudhary</h6>
+          <p class="team-role">Marketing Head</p>
+        </div>
+        <div class="team-back">
+          <div class="team-contact">
+            <a href="tel:+916280031227"><i class="fas fa-phone"></i> +91 62800 31227</a>
+            <a href="mailto:pawanchoudhary8548@gmail.com"><i class="fas fa-envelope"></i> pawanchoudhary8548@gmail.com</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Existing Member 3 -->
+  <div class="col-md-4 reveal">
+    <div class="team-card">
+      <div class="team-inner">
+        <div class="team-front">
+          <img src="{{ url_for('static', filename='images/Programmer1.jpeg') }}" class="team-photo" alt="Saksham Sharma">
+          <h6 class="team-name">Saksham Sharma</h6>
+          <p class="team-role">Programmer</p>
+        </div>
+        <div class="team-back">
+          <div class="team-contact">
+            <a href="tel:+917018188874"><i class="fas fa-phone"></i> +91 70181 88874</a>
+            <a href="mailto:sakshamx0008@gmail.com"><i class="fas fa-envelope"></i> sakshamx0008@gmail.com</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- New Member 4 -->
+  <div class="col-md-4 reveal">
+    <div class="team-card">
+      <div class="team-inner">
+        <div class="team-front">
+          <img src="{{ url_for('static', filename='images/Designer.jpeg') }}" class="team-photo" alt="New Member 1">
+          <h6 class="team-name">Bhumika Panwar</h6>
+          <p class="team-role">Assistant Developer</p>
+        </div>
+        <div class="team-back">
+          <div class="team-contact">
+            <a href="tel:+"><i class="fas fa-phone"></i> </a>
+            <a href="mailto:"><i class="fas fa-envelope"></i> </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- New Member 5 -->
+  <div class="col-md-4 reveal">
+    <div class="team-card">
+      <div class="team-inner">
+        <div class="team-front">
+          <img src="{{ url_for('static', filename='images/Assistant Marketing Head.jpeg') }}" class="team-photo" alt="New Member 2">
+          <h6 class="team-name">Anmol Chaudhary</h6>
+          <p class="team-role">Assistant Marketing Head</p>
+        </div>
+        <div class="team-back">
+          <div class="team-contact">
+            <a href="tel:"><i class="fas fa-phone"></i> </a>
+            <a href="mailto:"><i class="fas fa-envelope"></i></a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- New Member 6 -->
+  <div class="col-md-4 reveal">
+    <div class="team-card">
+      <div class="team-inner">
+        <div class="team-front">
+          <img src="{{ url_for('static', filename='images/Assistant Developer.jpeg') }}" class="team-photo" alt="New Member 3">
+          <h6 class="team-name">Pranav Sharma</h6>
+          <p class="team-role">Assistant Programmer</p>
+        </div>
+        <div class="team-back">
+          <div class="team-contact">
+            <a href="tel:+918888999900"><i class="fas fa-phone"></i> +91 88889 99900</a>
+            <a href="mailto:simran@example.com"><i class="fas fa-envelope"></i> simran@example.com</a>
+          </div>
+        </div>
+</div>
+</div>
+</div>
+  </div>
+  </section>
+  <footer>
+  <div class="container text-center">
+    <p style="color: var(--muted);">&copy; 2025 RaktDhara. All rights reserved.</p>
+  </div>  
+</footer>
+
+  <!-- SCRIPTS - ✅ FIXED: Only step navigation + confetti -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
+  <script>
+document.addEventListener('DOMContentLoaded', () => {
+  setTimeout(() => { document.body.classList.add("splash-done"); }, 6500);
+  
+  // Confetti on form submit (both forms)
+  document.querySelectorAll('.confetti-form').forEach(form => {
+    form.addEventListener('submit', () => {
+      if (typeof confetti === 'function') {
+        confetti({ particleCount: 180, spread: 120, origin: { y: 0.7 } });
+      }
+    });
+  });
+
+  // Team animations [UNCHANGED]
+  const reveals = document.querySelectorAll(".reveal");
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach((entry, idx) => {
+      if (entry.isIntersecting) {
+        entry.target.style.transitionDelay = (idx * 120) + 'ms';
+        entry.target.classList.add("visible");
+        observer.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.2 });
+  reveals.forEach(r => observer.observe(r));
+
+  document.querySelectorAll('.team-card').forEach(card => {
+    const damp = 20;
+    card.addEventListener('mousemove', (e) => {
+      const rect = card.getBoundingClientRect();
+      const cx = rect.left + rect.width / 2;
+      const cy = rect.top + rect.height / 2;
+      const dx = (e.clientX - cx) / rect.width;
+      const dy = (e.clientY - cy) / rect.height;
+      const rx = (-dy * damp).toFixed(2);
+      const ry = (dx * damp).toFixed(2);
+      card.style.transform = `translateY(-6px) scale(1.02) rotateX(${rx}deg) rotateY(${ry}deg)`;
+    });
+    card.addEventListener('mouseleave', () => {
+      card.style.transform = '';
+    });
+  });
+
+
+  // ✅ STEP NAVIGATION ONLY (no AJAX/form interference)
+  const regSteps = document.querySelectorAll('#donorRegisterForm .step');
+  let regStep = 0;
+  
+  function updateSteps() {
+    regSteps.forEach((step, i) => {
+      step.classList.remove('active', 'prev');
+      if (i === regStep) step.classList.add('active');
+      else if (i < regStep) step.classList.add('prev');
+    });
+  }
+  
+  document.querySelectorAll('#donorRegisterForm .next').forEach(btn => {
+    btn.addEventListener('click', () => {
+      if (regStep < regSteps.length - 1) {
+        regStep++;
+        updateSteps();
+      }
+    });
+  });
+  
+  document.querySelectorAll('#donorRegisterForm .prev').forEach(btn => {
+    btn.addEventListener('click', () => {
+      if (regStep > 0) {
+        regStep--;
+        updateSteps();
+      }
+    });
+  });
+  updateSteps();
+
+  // ✅ NO AJAX - Form submits normally to /register
+});
+  </script>
+</body>
+</html>

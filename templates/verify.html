@@ -1,0 +1,170 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Raktdhara — Verify OTP</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <!-- Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;900&display=swap" rel="stylesheet">
+
+  <!-- Bootstrap -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+  <style>
+    body {
+      min-height: 100vh;
+      background: linear-gradient(180deg, #07121a, #041119);
+      font-family: 'Montserrat', sans-serif;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+    }
+
+    .verify-card {
+      background: rgba(6, 18, 23, 0.95);
+      border-radius: 18px;
+      padding: 35px;
+      width: 100%;
+      max-width: 420px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.6);
+      border: 1px solid rgba(255,255,255,0.05);
+      animation: fadeInUp 0.8s ease;
+    }
+
+    @keyframes fadeInUp {
+      from { transform: translateY(40px); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
+    }
+
+    .title {
+      font-weight: 900;
+      text-align: center;
+      margin-bottom: 6px;
+    }
+
+    .title span:first-child { color: #fff; }
+    .title span:last-child { color: #c80f2e; }
+
+    .subtitle {
+      text-align: center;
+      color: #9aa6ab;
+      font-size: 0.95rem;
+      margin-bottom: 22px;
+    }
+
+    .otp-input {
+      text-align: center;
+      letter-spacing: 8px;
+      font-size: 1.5rem;
+      font-weight: 700;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.08);
+      color: #fff;
+      border-radius: 12px;
+      padding: 12px;
+    }
+
+    .otp-input:focus {
+      border-color: #c80f2e;
+      box-shadow: 0 0 15px rgba(200,15,46,0.5);
+    }
+
+    .verify-btn {
+      background: linear-gradient(90deg, #c80f2e, #ff6b88);
+      border: none;
+      border-radius: 14px;
+      padding: 12px;
+      font-weight: 800;
+      width: 100%;
+      margin-top: 18px;
+      transition: all 0.3s ease;
+    }
+
+    .verify-btn:hover {
+      transform: scale(1.05);
+      background: linear-gradient(45deg, #ff0066, #ffcc00);
+    }
+
+    .resend {
+      text-align: center;
+      margin-top: 14px;
+      font-size: 0.9rem;
+    }
+
+    .resend a {
+      color: #00b3b3;
+      text-decoration: none;
+      font-weight: 600;
+    }
+
+    .resend a:hover {
+      text-decoration: underline;
+    }
+
+    .alert {
+      border-radius: 12px;
+      font-size: 0.9rem;
+      padding: 10px;
+    }
+  </style>
+</head>
+
+<body>
+
+<div class="verify-card">
+
+  <div class="title">
+    <span>Rakt</span><span>Dhara</span>
+  </div>
+
+  <div class="subtitle">
+    Enter the OTP sent to your registered email / phone
+  </div>
+
+  <!-- FLASH MESSAGES -->
+  {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+      {% for category, message in messages %}
+        <div class="alert alert-{{ category }} text-center">
+          {{ message }}
+        </div>
+      {% endfor %}
+    {% endif %}
+  {% endwith %}
+
+  <!-- OTP FORM -->
+  <form method="POST" action="/verify_otp">
+    <div class="mb-3">
+      <input
+        type="text"
+        name="otp"
+        class="form-control otp-input"
+        placeholder="● ● ● ● ● ●"
+        maxlength="6"
+        pattern="[0-9]{6}"
+        required
+        autofocus
+      >
+    </div>
+
+    <button type="submit" class="verify-btn">
+      <i class="fas fa-check-circle"></i> Verify OTP
+    </button>
+  </form>
+
+  <div class="resend">
+    Didn’t receive OTP?
+    <a href="/resend_otp">Resend OTP</a>
+  </div>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+</body>
+</html>

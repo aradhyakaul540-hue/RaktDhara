@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Search Donors — Rakt Dhara</title>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;600;700&display=swap" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+  <header class="topbar">
+    <div class="container-lg d-flex align-items-center justify-content-between py-3">
+      <div class="brand d-flex align-items-center">
+        <img src="{{ url_for('static', filename='logo.png') }}" alt="Rakt Dhara Logo" class="logo">
+        <span>Rakt <span class="brand-accent">Dhara</span></span>
+      </div>
+      <nav class="nav d-none d-md-flex">
+        <a class="nav-link" href="/">Home</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container my-5">
+    <h2 class="mb-4">Donors Matching Your Criteria</h2>
+    {% if results %}
+    <div class="table-responsive">
+      <table class="table table-striped table-bordered">
+        <thead class="table-dark">
+          <tr>
+            <th>Name</th>
+            <th>Branch</th>
+            <th>Semester</th>
+            <th>Blood Group</th>
+            <th>Email</th>
+            <th>Phone</th>
+            <th>Address</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for donor in results %}
+          <tr>
+            <td>{{ donor[0] }}</td>
+            <td>{{ donor[1] }}</td>
+            <td>{{ donor[2] }}</td>
+            <td>{{ donor[3] }}</td>
+            <td>{{ donor[4] }}</td>
+            <td>{{ donor[5] }}</td>
+            <td>{{ donor[6] }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    {% else %}
+      <p class="text-muted">No donors found for your selection.</p>
+    {% endif %}
+  </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

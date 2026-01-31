@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Verify OTP & Reset Password — Rakt Dhara</title>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;600;700&display=swap" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Montserrat', sans-serif;
+      height: 100vh;
+      background: #f8f9fa;
+      overflow: hidden;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    .blood-drop {
+      position: absolute;
+      top: -20px;
+      width: 12px;
+      height: 20px;
+      background: crimson;
+      border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
+      opacity: 0.8;
+      animation: fall linear infinite;
+    }
+    @keyframes fall {
+      0% { transform: translateY(-20px); opacity: 1; }
+      100% { transform: translateY(110vh); opacity: 0; }
+    }
+    .reset-card {
+      position: relative;
+      z-index: 10;
+      background: #ffffff;
+      padding: 40px;
+      border-radius: 20px;
+      box-shadow: 0 0 25px rgba(0,0,0,0.1);
+      text-align: center;
+      color: #333;
+      width: 400px;
+    }
+    .reset-card h2 { color: #0dcaf0; margin: 20px 0; }
+    .btn-home {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      z-index: 20;
+    }
+    .logo-big {
+      height: 140px;
+      margin-bottom: 20px;
+    }
+  </style>
+</head>
+<body>
+  <!-- Home Button -->
+  <a href="{{ url_for('home') }}" class="btn btn-outline-dark btn-home">Home</a>
+
+  <!-- Falling Blood Drops -->
+  <script>
+    function createDrop() {
+      const drop = document.createElement("div");
+      drop.classList.add("blood-drop");
+      drop.style.left = Math.random() * window.innerWidth + "px";
+      drop.style.animationDuration = 2 + Math.random() * 3 + "s";
+      document.body.appendChild(drop);
+      setTimeout(() => drop.remove(), 5000);
+    }
+    setInterval(createDrop, 300);
+  </script>
+
+  <!-- Reset Password Card -->
+  <div class="reset-card">
+    <img src="{{ url_for('static', filename='images/logo.jpeg') }}" alt="Rakt Dhara Logo" class="logo-big">
+    <h2>Reset Password</h2>
+    <p class="text-muted">Enter the OTP sent to your email and set a new password.</p>
+
+    {% if error %}
+      <div class="alert alert-danger">{{ error }}</div>
+    {% endif %}
+    {% if success %}
+      <div class="alert alert-success">{{ success }}</div>
+      <a href="{{ url_for('login') }}" class="btn btn-success w-100 mt-3">⬅ Back to Login</a>
+    {% endif %}
+
+    <form method="POST" action="{{ url_for('verify_reset') }}">
+      <input type="hidden" name="email" value="{{ email }}">
+      
+      <div class="mb-3">
+        <input type="text" name="otp" class="form-control" placeholder="Enter OTP" required>
+      </div>
+      <div class="mb-3">
+        <input type="password" name="new_password" class="form-control" placeholder="New Password" required>
+      </div>
+      <div class="mb-3">
+        <input type="password" name="confirm_password" class="form-control" placeholder="Confirm Password" required>
+      </div>
+      <button type="submit" class="btn btn-info w-100">Update Password</button>
+    </form>
+  </div>
+</body>
+</html>

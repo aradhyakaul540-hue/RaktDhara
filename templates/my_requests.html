@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <title>My Blood Requests</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body class="bg-light">
+<div class="container py-4">
+  <h2 class="mb-4 text-danger">📌 My Blood Requests</h2>
+
+  {% if requests %}
+    {% for req in requests %}
+      <div class="card mb-4 shadow-sm">
+        <div class="card-body">
+          <h5 class="card-title text-danger">
+            🩸 Request for {{ req.blood_group }}
+          </h5>
+          <p><b>Location:</b> {{ req.location }}</p>
+          <p><b>Phone:</b> {{ req.phone }}</p>
+          <p><b>Email:</b> {{ req.email }}</p>
+          <p><b>Message:</b> {{ req.message or "N/A" }}</p>
+          <p><b>Ticket ID:</b> <span class="badge bg-dark">{{ req.ticket_id }}</span></p>
+          <p><small class="text-muted">Created at: {{ req.created_at }}</small></p>
+
+          <!-- Donor Response Summary -->
+          <div class="mt-3">
+            <h6>📊 Response Summary</h6>
+            <span class="badge bg-success">YES: {{ req.summary.yes }}</span>
+            <span class="badge bg-danger ms-2">NO: {{ req.summary.no }}</span>
+          </div>
+
+          <!-- Donor Responses Table -->
+          <h6 class="mt-3">💌 Donor Responses</h6>
+          {% if req.responses %}
+            <div class="table-responsive">
+              <table class="table table-sm table-bordered">
+                <thead class="table-light">
+                  <tr>
+                    <th>Donor</th>
+                    <th>Email</th>
+                    <th>Phone</th>
+                    <th>Blood Group</th>
+                    <th>Response</th>
+                    <th>Responded At</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for res in req.responses %}
+                    <tr>
+                      <td>{{ res.full_name or "Unknown" }}</td>
+                      <td>{{ res.donor_email }}</td>
+                      <td>{{ res.phone or "N/A" }}</td>
+                      <td>{{ res.blood_group or "N/A" }}</td>
+                      <td>
+                        {% if res.response == "YES" %}
+                          <span class="badge bg-success">✅ YES</span>
+                        {% else %}
+                          <span class="badge bg-danger">❌ NO</span>
+                        {% endif %}
+                      </td>
+                      <td>{{ res.responded_at }}</td>
+                    </tr>
+                  {% endfor %}
+                </tbody>
+              </table>
+            </div>
+          {% else %}
+            <p class="text-muted">No donor responses yet.</p>
+          {% endif %}
+        </div>
+      </div>
+    {% endfor %}
+  {% else %}
+    <p class="alert alert-info">You haven’t made any requests yet.</p>
+  {% endif %}
+
+  <a href="{{ url_for('dashboard') }}" class="btn btn-secondary">⬅ Back to Dashboard</a>
+</div>
+</body>
+</html>

@@ -1,0 +1,239 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Raktadhara — Donor Dashboard</title>
+
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;600;700&display=swap" rel="stylesheet">
+
+  <!-- Bootstrap -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+  <style>
+    html { scroll-behavior: smooth; }
+    body { background:#f8f9fa; font-family:'Montserrat',sans-serif; display:flex; flex-direction:column; min-height:100vh;}
+    .topbar { background:#0dcaf0; padding:12px 0; color:white; box-shadow:0 2px 8px rgba(0,0,0,0.1);}
+    .brand-row { display:flex; align-items:center; gap:12px;}
+    .brand-logo { width:60px; height:60px; border-radius:50%; object-fit:cover;}
+    .brand-title { font-weight:800; font-size:1.25rem;}
+    .brand-accent { color:#fff176;}
+    main { flex:1; padding:40px 0;}
+    .status-card { background:#fff; border-radius:16px; padding:32px; max-width:1100px; margin:auto; box-shadow:0 12px 30px rgba(0,0,0,0.1);}
+    .status-card h3 { color:#c80f2e; font-weight:800; margin-bottom:20px; text-align:center;}
+    .stats-row { margin-bottom:30px;}
+    .stat-box { background:#f1f5f9; border-radius:12px; padding:20px; text-align:center; box-shadow:0 2px 6px rgba(0,0,0,0.05);}
+    .stat-box h4 { font-weight:700; margin-top:10px;}
+    .chart-container { margin-top:30px;}
+    footer { background:#041119; color:#ccc; padding:25px 0; text-align:center;}
+    /* Star donor highlight */
+    .stat-box i.fa-star { filter: drop-shadow(0 0 8px gold); }
+  </style>
+</head>
+<body>
+  <!-- Navbar -->
+  <header class="topbar">
+    <div class="container d-flex justify-content-between align-items-center">
+      <div class="brand-row">
+        <img src="{{ url_for('static', filename='images/logo.jpeg') }}" alt="Logo" class="brand-logo">
+        <div class="brand-title">Rakt<span class="brand-accent">dhara</span></div>
+      </div>
+      <div>
+        <a class="btn btn-outline-light btn-sm" href="/">Home</a>
+        <a class="btn btn-outline-light btn-sm ms-2" href="/login">User</a>
+        <a class="btn btn-warning btn-sm ms-2" href="/admin">Admin</a>
+        <a class="btn btn-warning btn-sm ms-2" href="#donorStats">Donor Portal</a>
+        <a class="btn btn-danger btn-sm ms-2" href="#ticketCharts">Ticket Status</a>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Section -->
+  <main>
+
+    <!-- Donor Portal -->
+    <section id="donorStats" class="status-card">
+      <h3>👥 Donor Portal Overview</h3>
+      <div class="row stats-row">
+        <div class="col-md-4">
+          <div class="stat-box">
+            <i class="fa fa-users fa-2x text-primary"></i>
+            <h4>{{ total_donors }}</h4>
+            <p>Total Donors</p>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="stat-box">
+            <i class="fa fa-envelope-open fa-2x text-success"></i>
+            <h4>{{ total_requests }}</h4>
+            <p>Total Requests</p>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="stat-box">
+            <i class="fa fa-heart fa-2x text-danger"></i>
+            <h4>{{ successful_donations }}</h4>
+            <p>Successful Donations</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ⭐ Star Donors -->
+    <section id="starDonors" class="status-card mt-4">
+      <h3>🌟 Star Donors</h3>
+      <div class="row">
+        {% if star_donors %}
+          {% for donor in star_donors %}
+            <div class="col-md-3 mb-3">
+              <div class="stat-box">
+                <i class="fa fa-star text-warning fa-2x"></i>
+                <h5 class="mt-2">{{ donor.name }}</h5>
+                <p class="text-muted">{{ donor.blood_group }}</p>
+              </div>
+            </div>
+          {% endfor %}
+        {% else %}
+          <p class="text-center text-muted">No Star Donors yet.</p>
+        {% endif %}
+      </div>
+    </section>
+
+    <!-- Ticket Status -->
+    <section id="ticketCharts" class="status-card mt-4">
+      <h3>📊 Ticket Status</h3>
+
+      <!-- Search Ticket -->
+      <form method="POST" action="/donor_status" class="mb-4">
+        <div class="input-group">
+          <input type="text" class="form-control" name="ticket_id" placeholder="Enter Ticket ID" required>
+          <button type="submit" class="btn btn-danger">Check Status</button>
+        </div>
+      </form>
+
+      <div class="row">
+        <div class="col-md-6">
+          <canvas id="ticketsChart"></canvas>
+        </div>
+        <div class="col-md-6">
+          <canvas id="donorResponsesChart"></canvas>
+        </div>
+      </div>
+
+      {% if request_data %}
+      <div class="mt-4">
+        <h5>📌 Request Info</h5>
+        <p><b>Requester:</b> {{ request_data.requester_name }}</p>
+        <p><b>Blood Group:</b> {{ request_data.blood_group }}</p>
+        <p><b>Location:</b> {{ request_data.location }}</p>
+        <p><b>Status:</b>
+          {% if request_data.status == "CLOSED" %}
+            <span class="badge bg-danger">Closed</span>
+          {% else %}
+            <span class="badge bg-success">Open</span>
+          {% endif %}
+        </p>
+
+        <!-- ✅ Close Ticket Button -->
+        {% if request_data.status != "CLOSED" %}
+        <form method="POST" action="/close_ticket">
+          <input type="hidden" name="ticket_id" value="{{ request_data.ticket_id }}">
+          <button type="submit" class="btn btn-sm btn-danger mt-2">
+            <i class="fa fa-times"></i> Close Ticket
+          </button>
+        </form>
+        {% endif %}
+      </div>
+      {% elif error %}
+      <div class="alert alert-danger mt-3">{{ error }}</div>
+      {% endif %}
+    </section>
+  </main>
+
+  <!-- Footer -->
+  <footer>
+    <div class="container">
+      <small>&copy; 2025 Raktadhara. All rights reserved.</small>
+    </div>
+  </footer>
+
+  <!-- Scripts -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script>
+    // Open vs Closed Tickets Chart
+    const ctx1 = document.getElementById('ticketsChart').getContext('2d');
+    new Chart(ctx1, {
+      type: 'doughnut',
+      data: {
+        labels: ['Open Tickets', 'Closed Tickets'],
+        datasets: [{
+          data: [{{ open_tickets }}, {{ closed_tickets }}],
+          backgroundColor: ['#ffc107', '#dc3545']
+        }]
+      },
+      options: {
+        responsive: true,
+        animation: { animateScale: true, animateRotate: true },
+        plugins: { legend: { position: 'bottom' } }
+      }
+    });
+
+    // Donor Responses Chart
+    const ctx2 = document.getElementById('donorResponsesChart').getContext('2d');
+    new Chart(ctx2, {
+      type: 'pie',
+      data: {
+        labels: ['Responded YES', 'Responded NO'],
+        datasets: [{
+          data: [{{ yes_responses }}, {{ no_responses }}],
+          backgroundColor: ['#28a745', '#6c757d']
+        }]
+      },
+      options: {
+        responsive: true,
+        animation: { animateScale: true, animateRotate: true },
+        plugins: { legend: { position: 'bottom' } }
+      }
+    });
+  
+
+  // Multi-step donor registration navigation
+  const regSteps = document.querySelectorAll('#donorRegisterForm .step');
+  let regStep = 0;
+
+  function updateSteps() {
+    regSteps.forEach((step, i) => {
+      step.classList.remove('active', 'prev');
+      if (i === regStep) step.classList.add('active');
+      else if (i < regStep) step.classList.add('prev');
+    });
+  }
+
+  document.querySelectorAll('#donorRegisterForm .next').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      if(regStep < regSteps.length-1){
+        regStep++;
+        updateSteps();
+      }
+    });
+  });
+
+  document.querySelectorAll('#donorRegisterForm .prev').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      if(regStep > 0){
+        regStep--;
+        updateSteps();
+      }
+    });
+  });
+
+  updateSteps();
+</script>
+
+</body>
+</html>

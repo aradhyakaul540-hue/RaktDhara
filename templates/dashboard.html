@@ -1,0 +1,279 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>User Dashboard — Raktadhara</title>
+
+  <!-- Google Font + Bootstrap + Icons -->
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;600;700&display=swap" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
+
+  <style>
+    body { font-family: 'Montserrat', sans-serif; color: #fff; background: linear-gradient(135deg, #ff4e50, #f9d423); min-height: 100vh; overflow-x: hidden; }
+    .sidebar { width: 250px; height: 100vh; position: fixed; top:0; left:0; background: rgba(0,0,0,0.8); backdrop-filter: blur(10px); padding-top:1rem; box-shadow:2px 0 8px rgba(0,0,0,0.5); }
+    .sidebar h4 { padding:0 1rem; margin-bottom:1.5rem; font-weight:700; color:#fff; display:flex; align-items:center; gap:10px; }
+    .sidebar h4 img { width:90px; height:90px; border-radius:8px; }
+    .sidebar a { display:block; padding:12px 20px; color:#fff; text-decoration:none; border-radius:6px; margin:6px 12px; transition:all 0.2s; font-weight:600;}
+    .sidebar a:hover, .sidebar a.active { background:#fff176; color:#000; }
+    .main { margin-left:250px; padding:25px; }
+    .card { border-radius:15px; border:none; background: rgba(255,255,255,0.1); backdrop-filter: blur(15px); box-shadow:0 10px 20px rgba(0,0,0,0.5); color:#fff; margin-bottom:25px; transition: transform 0.3s ease, box-shadow 0.3s ease;}
+    .card:hover { transform: scale(1.02); box-shadow: 0 15px 30px rgba(0,0,0,0.6); }
+    h3,h5 { text-shadow:1px 1px 3px #000; }
+    table { color:#fff; backdrop-filter: blur(10px); }
+    thead { background: rgba(255,255,255,0.2); font-weight: 700; }
+    th, td { vertical-align: middle !important; }
+    .rare-blood { color:#ff1744; font-weight:bold; text-shadow:0 0 8px #ff1744; animation: glow 1.5s infinite alternate; }
+    @keyframes glow { 0% { text-shadow: 0 0 5px #ff1744; } 100% { text-shadow: 0 0 15px #ff1744; } }
+    input, select { border-radius: 10px; border: none; padding: 5px 8px; background: rgba(255,255,255,0.2); color: #fff; }
+    input::placeholder, select::placeholder { color: #fff; opacity: 0.8; }
+    .btn-action { margin: 2px; font-weight: 600; transition: transform 0.2s ease, box-shadow 0.2s ease; }
+    .btn-action:hover { transform: scale(1.2); box-shadow: 0 0 10px #fff; }
+
+    /* Floating Background */
+    .floating-bg { position: fixed; width: 100%; height: 100%; top:0; left:0; z-index:-1; pointer-events:none; background: radial-gradient(circle at 50% 50%, rgba(255,255,255,0.05), transparent 70%); animation: floatBG 15s linear infinite; }
+    @keyframes floatBG { 0% { background-position:0 0; } 50% { background-position:100% 100%; } 100% { background-position:0 0; } }
+
+    /* Flashing badges */
+    .badge-verified { animation: pulse-green 1.5s infinite alternate; }
+    .badge-unverified { animation: pulse-yellow 1.5s infinite alternate; }
+    @keyframes pulse-green { 0% { box-shadow:0 0 5px #00ff88; } 100% { box-shadow:0 0 20px #00ff88; } }
+    @keyframes pulse-yellow { 0% { box-shadow:0 0 5px #fff176; } 100% { box-shadow:0 0 20px #fff176; } }
+
+    thead input { width:100%; font-size:0.85rem; padding:4px 6px; border-radius:8px; border:none; outline:none; }
+    tbody tr:hover { background: rgba(255,255,255,0.1); box-shadow:0 0 15px #fff; transition:0.3s; }
+    .toast-container { position:fixed; top:20px; right:20px; z-index:2000; }
+  </style>
+</head>
+<body>
+  <!-- Floating Background -->
+  <div class="floating-bg"></div>
+
+  <!-- SIDEBAR -->
+  <div class="sidebar">
+    <h4>
+      <img src="{{ url_for('static', filename='images/logo.jpeg') }}" alt="Logo"> 
+      RaktaDhara
+    </h4>
+    <a href="{{ url_for('dashboard') }}" class="active"><i class="bi bi-speedometer2"></i> Dashboard</a>
+    <a href="{{ url_for('my_requests') }}"><i class="bi bi-broadcast-pin"></i> My Requests</a>
+    <a href="{{ url_for('change_password') }}"><i class="bi bi-key"></i> Change Password</a>
+    <a href="{{ url_for('logout') }}"><i class="bi bi-box-arrow-right"></i> Logout</a>
+  </div>
+
+  <!-- MAIN -->
+  <div class="main">
+    <!-- FLASH TOASTS -->
+    <div class="toast-container">
+      {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+          {% for category, message in messages %}
+            <div class="toast align-items-center text-bg-{{ category }} border-0 show mb-2" role="alert">
+              <div class="d-flex">
+                <div class="toast-body">{{ message }}</div>
+                <button type="button" class="btn-close me-2 m-auto" data-bs-dismiss="toast"></button>
+              </div>
+            </div>
+          {% endfor %}
+        {% endif %}
+      {% endwith %}
+    </div>
+
+    <!-- WELCOME CARD -->
+    <div class="card p-4 mb-4">
+      <h4>Hello, <span class="text-warning">{{ user.full_name }}</span> 👋</h4>
+      <p>
+        Age: {{ user.age }} | Gender: {{ user.gender }} | Weight: {{ user.weight }}kg | 
+        Blood Group: <b class="rare-blood">{{ user.blood_group }}</b>
+      </p>
+    </div>
+
+    <!-- STAR DONORS -->
+    <section class="mb-4">
+      <h3 class="mb-3">🌟 Star Donors</h3>
+      <div class="row">
+        {% if star_donors %}
+          {% for donor in star_donors %}
+            <div class="col-md-3 mb-3">
+              <div class="card shadow-sm border-0 p-3 text-center">
+                <h5>{{ donor.full_name or 'Anonymous' }}</h5>
+                <p class="text-muted mb-1">{{ donor.blood_group }}</p>
+                <div class="mb-2">
+                  {% for i in range(1,6) %}
+                    {% if i <= donor.donation_count %}
+                      <i class="fa fa-star text-warning"></i>
+                    {% else %}
+                      <i class="fa fa-star text-secondary"></i>
+                    {% endif %}
+                  {% endfor %}
+                </div>
+                {% if donor.donation_count >=5 %}
+                  <span class="badge bg-success">Eligible for Certificate 🎉</span>
+                {% else %}
+                  <small class="text-muted">Donated: {{ donor.donation_count }} time{{ 's' if donor.donation_count>1 else '' }}</small>
+                {% endif %}
+              </div>
+            </div>
+          {% endfor %}
+        {% else %}
+          <div class="col-12 text-center text-muted">No Star Donors yet.</div>
+        {% endif %}
+      </div>
+    </section>
+
+    <!-- BLOOD REQUESTS TO DONATE -->
+    <div class="card p-4 mb-4">
+      <h5 class="mb-3"><i class="bi bi-broadcast"></i> Blood Requests You Can Donate To</h5>
+      <div class="table-responsive">
+        <table class="table table-striped align-middle" id="reqTable">
+          <thead>
+            <tr>
+              <th>Patient Name<br><input type="text" placeholder="Filter Name"></th>
+              <th>Blood Group<br><input type="text" placeholder="Filter BG"></th>
+              <th>Age<br><input type="text" placeholder="Filter Age"></th>
+              <th>Weight<br><input type="text" placeholder="Filter Weight"></th>
+              <th>Health Condition<br><input type="text" placeholder="Filter Health"></th>
+              <th>Medications<br><input type="text" placeholder="Filter Meds"></th>
+              <th>Location<br><input type="text" placeholder="Filter Location"></th>
+              <th>Phone<br><input type="text" placeholder="Filter Phone"></th>
+              <th>Requested At<br><input type="text" placeholder="Filter Date"></th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for req in blood_requests %}
+              {% if req.blood_group in compatible_groups %}
+                <tr>
+                  <td>{{ req.requester_name }}</td>
+                  <td class="rare-blood">{{ req.blood_group }}</td>
+                  <td>{{ req.age }}</td>
+                  <td>{{ req.weight }}</td>
+                  <td>{{ req.health_condition }}</td>
+                  <td>{{ req.medications }}</td>
+                  <td>{{ req.location }}</td>
+                  <td>{{ req.phone }}</td>
+                  <td>{{ req.created_at }}</td>
+                  <td>
+                    <a href="{{ url_for('accept_request', request_id=req.id, donor_email=user.email) }}" class="btn btn-success btn-sm btn-action mb-1">Accept</a>
+                    <a href="{{ url_for('decline_request', request_id=req.id, donor_email=user.email) }}" class="btn btn-danger btn-sm btn-action mb-1">Decline</a>
+                  </td>
+                </tr>
+              {% endif %}
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- MY REQUESTS -->
+    <div class="card p-4 mb-4">
+      <h5 class="mb-3"><i class="bi bi-journal-check"></i> My Requests</h5>
+      <div class="table-responsive">
+        <table class="table table-striped align-middle">
+          <thead>
+            <tr>
+              <th>Blood Group</th>
+              <th>Location</th>
+              <th>Requested At</th>
+              <th>Status</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for req in my_requests %}
+              <tr>
+                <td class="rare-blood">{{ req.blood_group }}</td>
+                <td>{{ req.location }}</td>
+                <td>{{ req.created_at }}</td>
+                <td>
+                  {% if req.status == "CLOSED" %}
+                    <span class="badge bg-success">Closed</span>
+                  {% else %}
+                    <span class="badge bg-warning text-dark">Open</span>
+                  {% endif %}
+                </td>
+                <td>
+                  {% if req.status != "CLOSED" %}
+                    <form action="{{ url_for('close_ticket', ticket_id=req.id) }}" method="post" style="display:inline;">
+                      <button type="submit" class="btn btn-primary btn-sm">Close Ticket</button>
+                    </form>
+                  {% else %}
+                    <em>-</em>
+                  {% endif %}
+                </td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- PROFILE -->
+    <div class="card p-4 mb-4">
+      <h5 class="mb-3"><i class="bi bi-person-circle"></i> Your Profile</h5>
+      <div class="table-responsive">
+        <table class="table table-striped align-middle">
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Age</th>
+              <th>Gender</th>
+              <th>Weight</th>
+              <th>Blood Group</th>
+              <th>Email</th>
+              <th>Phone</th>
+              <th>WhatsApp</th>
+              <th>Aadhar</th>
+              <th>Travel History</th>
+              <th>Current Location</th>
+              <th>Health Condition</th>
+              <th>Medications</th>
+              <th>Permanent Address</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>{{ user.full_name }}</td>
+              <td>{{ user.age }}</td>
+              <td>{{ user.gender }}</td>
+              <td>{{ user.weight }}</td>
+              <td class="rare-blood">{{ user.blood_group }}</td>
+              <td>{{ user.email }}</td>
+              <td>{{ user.phone }}</td>
+              <td>{{ user.whatsapp_number }}</td>
+              <td>{{ user.aadhar_number }}</td>
+              <td>{{ user.travel_history }}</td>
+              <td>{{ user.current_location }}</td>
+              <td>{{ user.health_condition }}</td>
+              <td>{{ user.medications }}</td>
+              <td>{{ user.permanent_address }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    function setupColumnFilter(tableId) {
+      let table = document.getElementById(tableId);
+      if (!table) return;
+      let inputs = table.querySelectorAll("thead input");
+      inputs.forEach((input, colIndex) => {
+        input.addEventListener("keyup", function() {
+          let filterValue = this.value.toLowerCase();
+          table.querySelectorAll("tbody tr").forEach(row => {
+            let cell = row.cells[colIndex];
+            row.style.display = cell && cell.innerText.toLowerCase().includes(filterValue) ? "" : "none";
+          });
+        });
+      });
+    }
+    setupColumnFilter("reqTable");
+  </script>
+</body>
+</html>
