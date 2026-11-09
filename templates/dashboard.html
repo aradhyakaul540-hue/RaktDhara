@@ -3,69 +3,342 @@
 <head>
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
-  <title>User Dashboard — Raktadhara</title>
+  <meta name="theme-color" content="#070b14"/>
+  <title>User Dashboard — RaktDhara</title>
 
-  <!-- Google Font + Bootstrap + Icons -->
-  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
 
   <style>
-    body { font-family: 'Montserrat', sans-serif; color: #fff; background: linear-gradient(135deg, #ff4e50, #f9d423); min-height: 100vh; overflow-x: hidden; }
-    .sidebar { width: 250px; height: 100vh; position: fixed; top:0; left:0; background: rgba(0,0,0,0.8); backdrop-filter: blur(10px); padding-top:1rem; box-shadow:2px 0 8px rgba(0,0,0,0.5); }
-    .sidebar h4 { padding:0 1rem; margin-bottom:1.5rem; font-weight:700; color:#fff; display:flex; align-items:center; gap:10px; }
-    .sidebar h4 img { width:90px; height:90px; border-radius:8px; }
-    .sidebar a { display:block; padding:12px 20px; color:#fff; text-decoration:none; border-radius:6px; margin:6px 12px; transition:all 0.2s; font-weight:600;}
-    .sidebar a:hover, .sidebar a.active { background:#fff176; color:#000; }
-    .main { margin-left:250px; padding:25px; }
-    .card { border-radius:15px; border:none; background: rgba(255,255,255,0.1); backdrop-filter: blur(15px); box-shadow:0 10px 20px rgba(0,0,0,0.5); color:#fff; margin-bottom:25px; transition: transform 0.3s ease, box-shadow 0.3s ease;}
-    .card:hover { transform: scale(1.02); box-shadow: 0 15px 30px rgba(0,0,0,0.6); }
-    h3,h5 { text-shadow:1px 1px 3px #000; }
-    table { color:#fff; backdrop-filter: blur(10px); }
-    thead { background: rgba(255,255,255,0.2); font-weight: 700; }
-    th, td { vertical-align: middle !important; }
-    .rare-blood { color:#ff1744; font-weight:bold; text-shadow:0 0 8px #ff1744; animation: glow 1.5s infinite alternate; }
-    @keyframes glow { 0% { text-shadow: 0 0 5px #ff1744; } 100% { text-shadow: 0 0 15px #ff1744; } }
-    input, select { border-radius: 10px; border: none; padding: 5px 8px; background: rgba(255,255,255,0.2); color: #fff; }
-    input::placeholder, select::placeholder { color: #fff; opacity: 0.8; }
-    .btn-action { margin: 2px; font-weight: 600; transition: transform 0.2s ease, box-shadow 0.2s ease; }
-    .btn-action:hover { transform: scale(1.2); box-shadow: 0 0 10px #fff; }
+    :root{
+      --bg:#070b14;
+      --bg2:#0c1220;
+      --panel:rgba(17,25,39,.82);
+      --panel-strong:#111a29;
+      --panel-soft:rgba(255,255,255,.055);
+      --border:rgba(255,255,255,.10);
+      --text:#f7f9ff;
+      --muted:#9ba8bd;
+      --accent:#e51d4f;
+      --accent-2:#ff496f;
+      --accent-soft:rgba(229,29,79,.15);
+      --success:#22c55e;
+      --warning:#fbbf24;
+      --danger:#ef4444;
+      --shadow:0 24px 70px rgba(0,0,0,.34);
+      --radius:22px;
+      --sidebar:265px;
+    }
 
-    /* Floating Background */
-    .floating-bg { position: fixed; width: 100%; height: 100%; top:0; left:0; z-index:-1; pointer-events:none; background: radial-gradient(circle at 50% 50%, rgba(255,255,255,0.05), transparent 70%); animation: floatBG 15s linear infinite; }
-    @keyframes floatBG { 0% { background-position:0 0; } 50% { background-position:100% 100%; } 100% { background-position:0 0; } }
+    *{box-sizing:border-box}
+    html{scroll-behavior:smooth}
+    body{
+      margin:0;
+      min-height:100vh;
+      overflow-x:hidden;
+      font-family:'Montserrat',sans-serif;
+      color:var(--text);
+      background:
+        radial-gradient(circle at 80% 8%, rgba(229,29,79,.13), transparent 28%),
+        radial-gradient(circle at 35% 92%, rgba(35,211,238,.08), transparent 26%),
+        linear-gradient(135deg,var(--bg),var(--bg2) 55%,#07141c);
+    }
 
-    /* Flashing badges */
-    .badge-verified { animation: pulse-green 1.5s infinite alternate; }
-    .badge-unverified { animation: pulse-yellow 1.5s infinite alternate; }
-    @keyframes pulse-green { 0% { box-shadow:0 0 5px #00ff88; } 100% { box-shadow:0 0 20px #00ff88; } }
-    @keyframes pulse-yellow { 0% { box-shadow:0 0 5px #fff176; } 100% { box-shadow:0 0 20px #fff176; } }
+    /* Animated ambient background */
+    .ambient{position:fixed;inset:0;z-index:-3;overflow:hidden;pointer-events:none}
+    .orb{
+      position:absolute;border-radius:50%;filter:blur(2px);opacity:.18;
+      animation:orbFloat 14s ease-in-out infinite;
+    }
+    .orb.one{width:340px;height:340px;background:#e51d4f;top:-120px;right:8%;animation-delay:-2s}
+    .orb.two{width:280px;height:280px;background:#19b7d7;bottom:-120px;left:18%;animation-delay:-7s}
+    .orb.three{width:180px;height:180px;background:#ffb000;top:44%;left:45%;animation-delay:-11s}
+    .grid{
+      position:absolute;inset:0;opacity:.035;
+      background-image:linear-gradient(rgba(255,255,255,.5) 1px,transparent 1px),
+                       linear-gradient(90deg,rgba(255,255,255,.5) 1px,transparent 1px);
+      background-size:42px 42px;
+      mask-image:linear-gradient(to bottom,transparent,black 20%,black 80%,transparent);
+    }
+    @keyframes orbFloat{
+      0%,100%{transform:translate3d(0,0,0) scale(1)}
+      50%{transform:translate3d(35px,-28px,0) scale(1.08)}
+    }
 
-    thead input { width:100%; font-size:0.85rem; padding:4px 6px; border-radius:8px; border:none; outline:none; }
-    tbody tr:hover { background: rgba(255,255,255,0.1); box-shadow:0 0 15px #fff; transition:0.3s; }
-    .toast-container { position:fixed; top:20px; right:20px; z-index:2000; }
+    /* Sidebar */
+    .sidebar{
+      position:fixed;z-index:1100;left:0;top:0;bottom:0;width:var(--sidebar);
+      padding:22px 15px;
+      background:rgba(5,9,17,.88);
+      border-right:1px solid var(--border);
+      backdrop-filter:blur(24px);
+      -webkit-backdrop-filter:blur(24px);
+      box-shadow:18px 0 60px rgba(0,0,0,.18);
+      transition:transform .35s ease;
+    }
+    .brand{
+      display:flex;align-items:center;gap:12px;padding:6px 4px 20px;
+      border-bottom:1px solid rgba(255,255,255,.09);
+      margin-bottom:18px;
+    }
+    .brand-logo{
+      width:62px;height:62px;object-fit:cover;border-radius:18px;
+      border:1px solid rgba(255,255,255,.18);
+      box-shadow:0 12px 30px rgba(229,29,79,.22);
+    }
+    .brand-name{font-size:18px;font-weight:800;letter-spacing:.1px}
+    .brand-name span{color:#ff3d68}
+    .brand-sub{font-size:10px;color:#aeb8c8;margin-top:4px;letter-spacing:.7px}
+    .nav-label{
+      color:#71809a;font-size:10px;font-weight:800;letter-spacing:2px;
+      margin:26px 12px 10px;text-transform:uppercase
+    }
+    .sidebar a{
+      position:relative;display:flex;align-items:center;gap:13px;
+      color:#dfe6f2;text-decoration:none;padding:14px 15px;margin:7px 0;
+      border-radius:14px;font-size:14px;font-weight:600;
+      transition:transform .25s ease,background .25s ease,color .25s ease,box-shadow .25s ease;
+      overflow:hidden;
+    }
+    .sidebar a i{width:20px;text-align:center;font-size:16px}
+    .sidebar a::before{
+      content:"";position:absolute;inset:0;background:linear-gradient(90deg,rgba(255,255,255,.08),transparent);
+      transform:translateX(-105%);transition:transform .35s ease
+    }
+    .sidebar a:hover::before{transform:translateX(0)}
+    .sidebar a:hover{transform:translateX(4px);color:#fff;background:rgba(255,255,255,.06)}
+    .sidebar a.active{
+      color:#fff;background:linear-gradient(135deg,#ec2052,#c90f42);
+      box-shadow:0 12px 30px rgba(229,29,79,.30);
+    }
+    .sidebar a.active::after{
+      content:"";width:6px;height:6px;background:#fff;border-radius:50%;
+      margin-left:auto;box-shadow:0 0 14px #fff;animation:pulse 1.8s infinite
+    }
+    @keyframes pulse{50%{opacity:.45;transform:scale(.7)}}
+
+    /* Main */
+    .main{margin-left:var(--sidebar);min-height:100vh;padding:26px 30px 55px}
+    .topbar{
+      display:flex;align-items:center;justify-content:space-between;gap:15px;margin-bottom:24px;
+      animation:rise .65s ease both;
+    }
+    .eyebrow{font-size:10px;font-weight:800;letter-spacing:2px;color:#8492a9;text-transform:uppercase}
+    .page-title{font-size:25px;font-weight:800;margin:5px 0 0}
+    .top-actions{display:flex;gap:10px;align-items:center}
+    .icon-btn,.menu-btn{
+      border:1px solid var(--border);background:rgba(255,255,255,.055);color:#fff;
+      width:44px;height:44px;border-radius:14px;display:grid;place-items:center;
+      transition:.25s ease;box-shadow:0 10px 25px rgba(0,0,0,.12)
+    }
+    .icon-btn:hover,.menu-btn:hover{transform:translateY(-2px);background:rgba(255,255,255,.1);color:#fff}
+    .menu-btn{display:none}
+
+    /* Welcome */
+    .welcome{
+      position:relative;overflow:hidden;border:1px solid rgba(255,255,255,.1);
+      background:linear-gradient(120deg,rgba(229,29,79,.18),rgba(17,25,39,.88) 50%,rgba(23,162,184,.10));
+      border-radius:var(--radius);padding:25px 28px;margin-bottom:24px;
+      box-shadow:var(--shadow);animation:rise .75s .05s ease both
+    }
+    .welcome::after{
+      content:"";position:absolute;width:240px;height:240px;border-radius:50%;right:-80px;top:-100px;
+      border:1px solid rgba(255,255,255,.10);box-shadow:0 0 0 35px rgba(255,255,255,.02),0 0 0 70px rgba(255,255,255,.015)
+    }
+    .welcome h4{font-size:21px;font-weight:800;margin:0 0 7px}
+    .welcome h4 span{color:#ff5677}
+    .welcome p{margin:0;color:#aeb8c8;font-size:12px;line-height:1.8}
+    .profile-pills{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}
+    .pill{
+      border:1px solid rgba(255,255,255,.10);background:rgba(255,255,255,.055);
+      padding:7px 11px;border-radius:999px;font-size:10px;font-weight:700;color:#d9e1ee
+    }
+    .pill.blood{color:#ff617f;border-color:rgba(255,73,111,.3);background:rgba(229,29,79,.10)}
+
+    .section-card{
+      background:linear-gradient(145deg,rgba(18,27,42,.91),rgba(11,18,29,.87));
+      border:1px solid rgba(255,255,255,.09);border-radius:var(--radius);
+      box-shadow:var(--shadow);overflow:hidden;margin-bottom:24px;
+      animation:rise .75s ease both;
+    }
+    .section-card:nth-of-type(2){animation-delay:.10s}
+    .section-card:nth-of-type(3){animation-delay:.15s}
+    .section-card:nth-of-type(4){animation-delay:.20s}
+    .section-head{
+      display:flex;align-items:center;justify-content:space-between;gap:15px;
+      padding:20px 22px;border-bottom:1px solid rgba(255,255,255,.08);
+      background:linear-gradient(90deg,rgba(255,255,255,.025),rgba(255,255,255,.005));
+    }
+    .section-title{display:flex;align-items:center;gap:11px;font-size:19px;font-weight:800;margin:0}
+    .section-icon{
+      width:36px;height:36px;border-radius:12px;display:grid;place-items:center;
+      color:#ff5578;background:rgba(229,29,79,.13);border:1px solid rgba(255,73,111,.15)
+    }
+    .count-badge{
+      background:#df294c;color:#fff;border-radius:999px;padding:7px 12px;
+      font-size:10px;font-weight:800;white-space:nowrap
+    }
+    .section-body{padding:20px 22px}
+
+    /* Star donors */
+    .donor-card{
+      height:100%;padding:20px;border-radius:18px;text-align:center;
+      border:1px solid rgba(255,255,255,.08);background:rgba(255,255,255,.035);
+      transition:transform .3s ease,box-shadow .3s ease,border-color .3s ease;
+      position:relative;overflow:hidden
+    }
+    .donor-card::before{
+      content:"";position:absolute;inset:0;background:radial-gradient(circle at 50% 0,rgba(255,73,111,.12),transparent 55%);
+      opacity:0;transition:.3s ease
+    }
+    .donor-card:hover{transform:translateY(-7px);border-color:rgba(255,73,111,.35);box-shadow:0 18px 35px rgba(0,0,0,.22)}
+    .donor-card:hover::before{opacity:1}
+    .avatar{
+      width:58px;height:58px;border-radius:18px;margin:0 auto 11px;display:grid;place-items:center;
+      font-size:21px;font-weight:800;color:#fff;background:linear-gradient(135deg,#e51d4f,#ff607f);
+      box-shadow:0 10px 25px rgba(229,29,79,.25)
+    }
+    .donor-card h5{font-size:14px;font-weight:800;margin:0 0 5px;position:relative}
+    .donor-blood{font-size:11px;color:#ff6682;font-weight:800;position:relative}
+    .stars{margin:10px 0 9px;font-size:12px;position:relative}
+    .donor-note{font-size:10px;color:#94a1b5;position:relative}
+    .certificate{font-size:9px!important;font-weight:800!important;padding:6px 9px!important;position:relative}
+
+    /* Tables */
+    .table-wrap{overflow-x:auto;overflow-y:hidden;border-radius:16px;border:1px solid rgba(255,255,255,.07)}
+    .table-wrap::-webkit-scrollbar{height:9px}
+    .table-wrap::-webkit-scrollbar-track{background:#0b111b}
+    .table-wrap::-webkit-scrollbar-thumb{background:#667080;border-radius:20px}
+    .pro-table{margin:0;min-width:1180px;color:#dce5f2;border-color:rgba(255,255,255,.06);vertical-align:middle}
+    .pro-table th{
+      background:#111a28;color:#9eabc0;border:0;padding:13px 11px;
+      font-size:10px;letter-spacing:1px;text-transform:uppercase;font-weight:800;white-space:nowrap
+    }
+    .pro-table td{
+      background:rgba(12,19,31,.74);color:#d8e0ed;border-color:rgba(255,255,255,.055);
+      padding:13px 11px;font-size:11px;white-space:nowrap
+    }
+    .pro-table tbody tr{transition:transform .2s ease,background .2s ease}
+    .pro-table tbody tr:hover{background:rgba(229,29,79,.06);transform:translateX(2px)}
+    .filter{
+      width:100%;min-width:74px;margin-top:8px;padding:8px 9px;border-radius:9px;
+      border:1px solid rgba(255,255,255,.09);outline:0;background:#182231;color:#eaf0fa;
+      font-family:inherit;font-size:10px;transition:.2s ease
+    }
+    .filter::placeholder{color:#77859b}
+    .filter:focus{border-color:rgba(255,73,111,.55);box-shadow:0 0 0 3px rgba(229,29,79,.10)}
+    .blood-value{font-weight:800;color:#ff5e7e;text-shadow:0 0 12px rgba(255,70,105,.25)}
+    .action-group{display:flex;gap:6px}
+    .btn-action{
+      border:0;border-radius:9px;padding:8px 11px;font-size:10px;font-weight:800;
+      transition:.22s ease;white-space:nowrap
+    }
+    .btn-action:hover{transform:translateY(-2px);box-shadow:0 8px 18px rgba(0,0,0,.25)}
+    .btn-accept{background:#16a34a;color:#fff}
+    .btn-decline{background:#dc2626;color:#fff}
+    .btn-close-ticket{background:#2563eb;color:#fff}
+    .status{
+      display:inline-flex;align-items:center;gap:6px;padding:6px 9px;border-radius:999px;font-size:9px;font-weight:800
+    }
+    .status.open{color:#ffd96a;background:rgba(251,191,36,.12);border:1px solid rgba(251,191,36,.22)}
+    .status.closed{color:#6ee7a0;background:rgba(34,197,94,.12);border:1px solid rgba(34,197,94,.22)}
+    .status i{font-size:6px}
+
+    /* Profile data should remain readable instead of washed out */
+    .profile-table{min-width:1350px}
+    .profile-table td{white-space:normal;min-width:105px;max-width:190px;word-break:break-word;color:#dbe4f1}
+    .profile-table th{white-space:nowrap}
+    .email-cell{min-width:205px}
+    .phone-cell{min-width:125px}
+
+    /* Toast */
+    .toast-container{position:fixed;top:18px;right:18px;z-index:2000}
+    .toast{
+      border:1px solid rgba(255,255,255,.12)!important;border-radius:14px!important;
+      box-shadow:0 18px 45px rgba(0,0,0,.35)!important;backdrop-filter:blur(14px)
+    }
+
+    .backtop{
+      position:fixed;right:24px;bottom:24px;width:44px;height:44px;border-radius:14px;
+      border:1px solid rgba(255,255,255,.12);background:#151e2d;color:#fff;display:none;
+      place-items:center;z-index:900;box-shadow:0 12px 30px rgba(0,0,0,.25)
+    }
+    .backtop.show{display:grid;animation:pop .25s ease}
+    @keyframes pop{from{transform:scale(.6);opacity:0}to{transform:scale(1);opacity:1}}
+
+    @keyframes rise{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:none}}
+
+    /* Mobile */
+    @media(max-width:900px){
+      :root{--sidebar:265px}
+      .sidebar{transform:translateX(-105%)}
+      .sidebar.open{transform:translateX(0)}
+      .main{margin-left:0;padding:20px 15px 45px}
+      .menu-btn{display:grid}
+      .page-title{font-size:20px}
+      .top-actions .icon-btn{display:none}
+      .welcome{padding:21px}
+      .section-head{padding:17px}
+      .section-body{padding:15px}
+      .overlay{
+        position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:1000;opacity:0;pointer-events:none;transition:.3s
+      }
+      .overlay.show{opacity:1;pointer-events:auto}
+    }
+    @media(max-width:560px){
+      .topbar{align-items:flex-start}
+      .eyebrow{font-size:8px}
+      .page-title{font-size:17px}
+      .welcome h4{font-size:17px}
+      .section-title{font-size:15px}
+      .count-badge{font-size:8px}
+      .profile-pills{gap:6px}
+      .pill{font-size:9px}
+    }
+
+    @media(prefers-reduced-motion:reduce){
+      html{scroll-behavior:auto}
+      *,*::before,*::after{animation-duration:.001ms!important;animation-iteration-count:1!important;transition-duration:.001ms!important}
+    }
   </style>
 </head>
+
 <body>
-  <!-- Floating Background -->
-  <div class="floating-bg"></div>
-
-  <!-- SIDEBAR -->
-  <div class="sidebar">
-    <h4>
-      <img src="{{ url_for('static', filename='images/logo.jpeg') }}" alt="Logo"> 
-      RaktaDhara
-    </h4>
-    <a href="{{ url_for('dashboard') }}" class="active"><i class="bi bi-speedometer2"></i> Dashboard</a>
-    <a href="{{ url_for('my_requests') }}"><i class="bi bi-broadcast-pin"></i> My Requests</a>
-    <a href="{{ url_for('change_password') }}"><i class="bi bi-key"></i> Change Password</a>
-    <a href="{{ url_for('logout') }}"><i class="bi bi-box-arrow-right"></i> Logout</a>
+  <div class="ambient" aria-hidden="true">
+    <div class="orb one"></div><div class="orb two"></div><div class="orb three"></div><div class="grid"></div>
   </div>
+  <div class="overlay" id="overlay"></div>
 
-  <!-- MAIN -->
-  <div class="main">
-    <!-- FLASH TOASTS -->
+  <aside class="sidebar" id="sidebar">
+    <div class="brand">
+      <img class="brand-logo" src="{{ url_for('static', filename='images/logo.jpeg') }}" alt="RaktDhara Logo">
+      <div>
+        <div class="brand-name">Rakt<span>Dhara</span></div>
+        <div class="brand-sub">Donate · Save · Smile</div>
+      </div>
+    </div>
+
+    <div class="nav-label">Navigation</div>
+    <a href="{{ url_for('dashboard') }}" class="active"><i class="bi bi-grid-1x2-fill"></i> Dashboard</a>
+    <a href="{{ url_for('my_requests') }}"><i class="bi bi-broadcast-pin"></i> My Requests</a>
+    <a href="{{ url_for('change_password') }}"><i class="bi bi-shield-lock-fill"></i> Change Password</a>
+    <a href="{{ url_for('logout') }}"><i class="bi bi-box-arrow-right"></i> Logout</a>
+  </aside>
+
+  <main class="main">
+    <div class="topbar">
+      <div>
+        <div class="eyebrow">RaktDhara • Donor Command Center</div>
+        <div class="page-title">Your Life-Saving Dashboard</div>
+      </div>
+      <div class="top-actions">
+        <button class="icon-btn" type="button" title="Back to top" onclick="window.scrollTo({top:0,behavior:'smooth'})"><i class="bi bi-arrow-up"></i></button>
+        <button class="menu-btn" id="menuBtn" type="button" aria-label="Open navigation"><i class="bi bi-list"></i></button>
+      </div>
+    </div>
+
     <div class="toast-container">
       {% with messages = get_flashed_messages(with_categories=true) %}
         {% if messages %}
@@ -81,199 +354,205 @@
       {% endwith %}
     </div>
 
-    <!-- WELCOME CARD -->
-    <div class="card p-4 mb-4">
-      <h4>Hello, <span class="text-warning">{{ user.full_name }}</span> 👋</h4>
-      <p>
-        Age: {{ user.age }} | Gender: {{ user.gender }} | Weight: {{ user.weight }}kg | 
-        Blood Group: <b class="rare-blood">{{ user.blood_group }}</b>
-      </p>
-    </div>
-
-    <!-- STAR DONORS -->
-    <section class="mb-4">
-      <h3 class="mb-3">🌟 Star Donors</h3>
-      <div class="row">
-        {% if star_donors %}
-          {% for donor in star_donors %}
-            <div class="col-md-3 mb-3">
-              <div class="card shadow-sm border-0 p-3 text-center">
-                <h5>{{ donor.full_name or 'Anonymous' }}</h5>
-                <p class="text-muted mb-1">{{ donor.blood_group }}</p>
-                <div class="mb-2">
-                  {% for i in range(1,6) %}
-                    {% if i <= donor.donation_count %}
-                      <i class="fa fa-star text-warning"></i>
-                    {% else %}
-                      <i class="fa fa-star text-secondary"></i>
-                    {% endif %}
-                  {% endfor %}
-                </div>
-                {% if donor.donation_count >=5 %}
-                  <span class="badge bg-success">Eligible for Certificate 🎉</span>
-                {% else %}
-                  <small class="text-muted">Donated: {{ donor.donation_count }} time{{ 's' if donor.donation_count>1 else '' }}</small>
-                {% endif %}
-              </div>
-            </div>
-          {% endfor %}
-        {% else %}
-          <div class="col-12 text-center text-muted">No Star Donors yet.</div>
-        {% endif %}
+    <section class="welcome">
+      <h4>Hello, <span>{{ user.full_name }}</span> 👋</h4>
+      <p>Your dashboard is ready. Find compatible blood requests, manage your own requests, and keep your donor profile up to date.</p>
+      <div class="profile-pills">
+        <span class="pill"><i class="bi bi-gender-ambiguous"></i> {{ user.gender }}</span>
+        <span class="pill"><i class="bi bi-speedometer2"></i> {{ user.weight }} kg</span>
+        <span class="pill blood"><i class="bi bi-droplet-fill"></i> {{ user.blood_group }}</span>
       </div>
     </section>
 
-    <!-- BLOOD REQUESTS TO DONATE -->
-    <div class="card p-4 mb-4">
-      <h5 class="mb-3"><i class="bi bi-broadcast"></i> Blood Requests You Can Donate To</h5>
-      <div class="table-responsive">
-        <table class="table table-striped align-middle" id="reqTable">
-          <thead>
-            <tr>
-              <th>Patient Name<br><input type="text" placeholder="Filter Name"></th>
-              <th>Blood Group<br><input type="text" placeholder="Filter BG"></th>
-              <th>Age<br><input type="text" placeholder="Filter Age"></th>
-              <th>Weight<br><input type="text" placeholder="Filter Weight"></th>
-              <th>Health Condition<br><input type="text" placeholder="Filter Health"></th>
-              <th>Medications<br><input type="text" placeholder="Filter Meds"></th>
-              <th>Location<br><input type="text" placeholder="Filter Location"></th>
-              <th>Phone<br><input type="text" placeholder="Filter Phone"></th>
-              <th>Requested At<br><input type="text" placeholder="Filter Date"></th>
-              <th>Action</th>
-            </tr>
-          </thead>
-          <tbody>
-            {% for req in blood_requests %}
-              {% if req.blood_group in compatible_groups %}
+    <section class="section-card">
+      <div class="section-head">
+        <h3 class="section-title"><span class="section-icon"><i class="fa-solid fa-star"></i></span> Star Donors</h3>
+      </div>
+      <div class="section-body">
+        <div class="row g-3">
+          {% if star_donors %}
+            {% for donor in star_donors %}
+              <div class="col-xl-3 col-lg-4 col-md-6">
+                <div class="donor-card">
+                  <div class="avatar">{{ (donor.full_name or 'A')[0]|upper }}</div>
+                  <h5>{{ donor.full_name or 'Anonymous' }}</h5>
+                  <div class="donor-blood">{{ donor.blood_group }}</div>
+                  <div class="stars">
+                    {% for i in range(1,6) %}
+                      {% if i <= donor.donation_count %}
+                        <i class="fa fa-star text-warning"></i>
+                      {% else %}
+                        <i class="fa fa-star text-secondary"></i>
+                      {% endif %}
+                    {% endfor %}
+                  </div>
+                  {% if donor.donation_count >=5 %}
+                    <span class="badge bg-success certificate">Eligible for Certificate 🎉</span>
+                  {% else %}
+                    <div class="donor-note">Donated: {{ donor.donation_count }} time{{ 's' if donor.donation_count>1 else '' }}</div>
+                  {% endif %}
+                </div>
+              </div>
+            {% endfor %}
+          {% else %}
+            <div class="col-12 text-center py-3 text-secondary">No Star Donors yet.</div>
+          {% endif %}
+        </div>
+      </div>
+    </section>
+
+    <section class="section-card">
+      <div class="section-head">
+        <h3 class="section-title"><span class="section-icon"><i class="bi bi-broadcast"></i></span> Blood Requests You Can Donate To</h3>
+        <span class="count-badge">Compatible Requests</span>
+      </div>
+      <div class="section-body">
+        <div class="table-wrap">
+          <table class="table pro-table align-middle" id="reqTable">
+            <thead>
+              <tr>
+                <th>Patient Name<input class="filter" type="text" placeholder="Filter name"></th>
+                <th>Blood Group<input class="filter" type="text" placeholder="Filter group"></th>
+                <th>Age<input class="filter" type="text" placeholder="Filter age"></th>
+                <th>Weight<input class="filter" type="text" placeholder="Filter wt."></th>
+                <th>Health Condition<input class="filter" type="text" placeholder="Filter health"></th>
+                <th>Medications<input class="filter" type="text" placeholder="Filter meds"></th>
+                <th>Location<input class="filter" type="text" placeholder="Filter location"></th>
+                <th>Phone<input class="filter" type="text" placeholder="Filter phone"></th>
+                <th>Requested At<input class="filter" type="text" placeholder="Filter date"></th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for req in blood_requests %}
+                {% if req.blood_group in compatible_groups %}
+                  <tr>
+                    <td>{{ req.requester_name }}</td>
+                    <td class="blood-value">{{ req.blood_group }}</td>
+                    <td>{{ req.age }}</td>
+                    <td>{{ req.weight }}</td>
+                    <td>{{ req.health_condition }}</td>
+                    <td>{{ req.medications }}</td>
+                    <td>{{ req.location }}</td>
+                    <td>{{ req.phone }}</td>
+                    <td>{{ req.created_at }}</td>
+                    <td>
+                      <div class="action-group">
+                        <a href="{{ url_for('accept_request', request_id=req.id, donor_email=user.email) }}" class="btn-action btn-accept">Accept</a>
+                        <a href="{{ url_for('decline_request', request_id=req.id, donor_email=user.email) }}" class="btn-action btn-decline">Decline</a>
+                      </div>
+                    </td>
+                  </tr>
+                {% endif %}
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <section class="section-card">
+      <div class="section-head">
+        <h3 class="section-title"><span class="section-icon"><i class="bi bi-journal-check"></i></span> My Requests</h3>
+      </div>
+      <div class="section-body">
+        <div class="table-wrap">
+          <table class="table pro-table align-middle">
+            <thead>
+              <tr>
+                <th>Blood Group</th><th>Location</th><th>Requested At</th><th>Status</th><th>Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for req in my_requests %}
                 <tr>
-                  <td>{{ req.requester_name }}</td>
-                  <td class="rare-blood">{{ req.blood_group }}</td>
-                  <td>{{ req.age }}</td>
-                  <td>{{ req.weight }}</td>
-                  <td>{{ req.health_condition }}</td>
-                  <td>{{ req.medications }}</td>
+                  <td class="blood-value">{{ req.blood_group }}</td>
                   <td>{{ req.location }}</td>
-                  <td>{{ req.phone }}</td>
                   <td>{{ req.created_at }}</td>
                   <td>
-                    <a href="{{ url_for('accept_request', request_id=req.id, donor_email=user.email) }}" class="btn btn-success btn-sm btn-action mb-1">Accept</a>
-                    <a href="{{ url_for('decline_request', request_id=req.id, donor_email=user.email) }}" class="btn btn-danger btn-sm btn-action mb-1">Decline</a>
+                    {% if req.status == "CLOSED" %}
+                      <span class="status closed"><i class="bi bi-circle-fill"></i> Closed</span>
+                    {% else %}
+                      <span class="status open"><i class="bi bi-circle-fill"></i> Open</span>
+                    {% endif %}
+                  </td>
+                  <td>
+                    {% if req.status != "CLOSED" %}
+                      <form action="{{ url_for('close_ticket', ticket_id=req.id) }}" method="post" style="display:inline;">
+                        <button type="submit" class="btn-action btn-close-ticket">Close Ticket</button>
+                      </form>
+                    {% else %}
+                      <em class="text-secondary">—</em>
+                    {% endif %}
                   </td>
                 </tr>
-              {% endif %}
-            {% endfor %}
-          </tbody>
-        </table>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
       </div>
-    </div>
+    </section>
 
-    <!-- MY REQUESTS -->
-    <div class="card p-4 mb-4">
-      <h5 class="mb-3"><i class="bi bi-journal-check"></i> My Requests</h5>
-      <div class="table-responsive">
-        <table class="table table-striped align-middle">
-          <thead>
-            <tr>
-              <th>Blood Group</th>
-              <th>Location</th>
-              <th>Requested At</th>
-              <th>Status</th>
-              <th>Action</th>
-            </tr>
-          </thead>
-          <tbody>
-            {% for req in my_requests %}
+    <section class="section-card">
+      <div class="section-head">
+        <h3 class="section-title"><span class="section-icon"><i class="bi bi-person-circle"></i></span> Your Profile</h3>
+      </div>
+      <div class="section-body">
+        <div class="table-wrap">
+          <table class="table pro-table profile-table align-middle">
+            <thead>
               <tr>
-                <td class="rare-blood">{{ req.blood_group }}</td>
-                <td>{{ req.location }}</td>
-                <td>{{ req.created_at }}</td>
-                <td>
-                  {% if req.status == "CLOSED" %}
-                    <span class="badge bg-success">Closed</span>
-                  {% else %}
-                    <span class="badge bg-warning text-dark">Open</span>
-                  {% endif %}
-                </td>
-                <td>
-                  {% if req.status != "CLOSED" %}
-                    <form action="{{ url_for('close_ticket', ticket_id=req.id) }}" method="post" style="display:inline;">
-                      <button type="submit" class="btn btn-primary btn-sm">Close Ticket</button>
-                    </form>
-                  {% else %}
-                    <em>-</em>
-                  {% endif %}
-                </td>
+                <th>Name</th><th>Age</th><th>Gender</th><th>Weight</th><th>Blood Group</th><th>Email</th><th>Phone</th><th>WhatsApp</th><th>Aadhar</th><th>Travel History</th><th>Current Location</th><th>Health Condition</th><th>Medications</th><th>Permanent Address</th>
               </tr>
-            {% endfor %}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              <tr>
+                <td>{{ user.full_name }}</td><td>{{ user.age }}</td><td>{{ user.gender }}</td><td>{{ user.weight }}</td><td class="blood-value">{{ user.blood_group }}</td><td class="email-cell">{{ user.email }}</td><td class="phone-cell">{{ user.phone }}</td><td class="phone-cell">{{ user.whatsapp_number }}</td><td>{{ user.aadhar_number }}</td><td>{{ user.travel_history }}</td><td>{{ user.current_location }}</td><td>{{ user.health_condition }}</td><td>{{ user.medications }}</td><td>{{ user.permanent_address }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
       </div>
-    </div>
+    </section>
+  </main>
 
-    <!-- PROFILE -->
-    <div class="card p-4 mb-4">
-      <h5 class="mb-3"><i class="bi bi-person-circle"></i> Your Profile</h5>
-      <div class="table-responsive">
-        <table class="table table-striped align-middle">
-          <thead>
-            <tr>
-              <th>Name</th>
-              <th>Age</th>
-              <th>Gender</th>
-              <th>Weight</th>
-              <th>Blood Group</th>
-              <th>Email</th>
-              <th>Phone</th>
-              <th>WhatsApp</th>
-              <th>Aadhar</th>
-              <th>Travel History</th>
-              <th>Current Location</th>
-              <th>Health Condition</th>
-              <th>Medications</th>
-              <th>Permanent Address</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td>{{ user.full_name }}</td>
-              <td>{{ user.age }}</td>
-              <td>{{ user.gender }}</td>
-              <td>{{ user.weight }}</td>
-              <td class="rare-blood">{{ user.blood_group }}</td>
-              <td>{{ user.email }}</td>
-              <td>{{ user.phone }}</td>
-              <td>{{ user.whatsapp_number }}</td>
-              <td>{{ user.aadhar_number }}</td>
-              <td>{{ user.travel_history }}</td>
-              <td>{{ user.current_location }}</td>
-              <td>{{ user.health_condition }}</td>
-              <td>{{ user.medications }}</td>
-              <td>{{ user.permanent_address }}</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-    </div>
-
-  </div>
+  <button class="backtop" id="backtop" type="button" aria-label="Back to top"><i class="bi bi-arrow-up"></i></button>
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
   <script>
-    function setupColumnFilter(tableId) {
-      let table = document.getElementById(tableId);
-      if (!table) return;
-      let inputs = table.querySelectorAll("thead input");
-      inputs.forEach((input, colIndex) => {
-        input.addEventListener("keyup", function() {
-          let filterValue = this.value.toLowerCase();
-          table.querySelectorAll("tbody tr").forEach(row => {
-            let cell = row.cells[colIndex];
-            row.style.display = cell && cell.innerText.toLowerCase().includes(filterValue) ? "" : "none";
+    function setupColumnFilter(tableId){
+      const table=document.getElementById(tableId);
+      if(!table) return;
+      const inputs=table.querySelectorAll("thead input.filter");
+      inputs.forEach((input,colIndex)=>{
+        input.addEventListener("input",function(){
+          const value=this.value.trim().toLowerCase();
+          table.querySelectorAll("tbody tr").forEach(row=>{
+            const cell=row.cells[colIndex];
+            row.style.display=cell && cell.innerText.toLowerCase().includes(value) ? "" : "none";
           });
         });
       });
     }
     setupColumnFilter("reqTable");
+
+    const sidebar=document.getElementById("sidebar");
+    const overlay=document.getElementById("overlay");
+    const menuBtn=document.getElementById("menuBtn");
+    function closeMenu(){sidebar.classList.remove("open");overlay.classList.remove("show")}
+    menuBtn?.addEventListener("click",()=>{sidebar.classList.toggle("open");overlay.classList.toggle("show")});
+    overlay?.addEventListener("click",closeMenu);
+    sidebar.querySelectorAll("a").forEach(a=>a.addEventListener("click",closeMenu));
+
+    const backtop=document.getElementById("backtop");
+    window.addEventListener("scroll",()=>{
+      backtop.classList.toggle("show",window.scrollY>420);
+    },{passive:true});
+    backtop.addEventListener("click",()=>window.scrollTo({top:0,behavior:"smooth"}));
+
+    document.querySelectorAll(".toast").forEach(el=>{
+      try{ new bootstrap.Toast(el,{autohide:true,delay:4500}).show(); }catch(e){}
+    });
   </script>
 </body>
 </html>

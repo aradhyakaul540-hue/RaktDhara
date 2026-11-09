@@ -1,162 +1,428 @@
 <!doctype html>
 <html lang="en">
 <head>
+  <link rel="icon" type="image/x-icon"
+      href="{{ url_for('static', filename='logo_circular.ico') }}">
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <meta name="theme-color" content="#080b0f"/>
   <title>Admin Login — Rakt Dhara</title>
-  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;600;700&display=swap" rel="stylesheet">
+
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;500;600;700&display=swap" rel="stylesheet">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
 
   <style>
+    * { box-sizing: border-box; }
+
     body {
       margin: 0;
-      font-family: 'Montserrat', sans-serif;
       min-height: 100vh;
-      background: #0b0f13; /* Dark background */
-      overflow-x: hidden;
+      font-family: 'Montserrat', sans-serif;
+      background:
+        radial-gradient(circle at 15% 20%, rgba(220,20,60,.13), transparent 30%),
+        radial-gradient(circle at 85% 80%, rgba(13,202,240,.10), transparent 30%),
+        #080b0f;
+      overflow: hidden;
       display: flex;
       justify-content: center;
       align-items: center;
       padding: 20px;
-      color: #e0e0e0;
+      color: #e9ecef;
+      position: relative;
+    }
+
+    .glow {
+      position: fixed;
+      width: 420px;
+      height: 420px;
+      border-radius: 50%;
+      filter: blur(90px);
+      opacity: .16;
+      pointer-events: none;
+      animation: drift 9s ease-in-out infinite alternate;
+    }
+
+    .glow-one {
+      background: crimson;
+      top: -180px;
+      left: -150px;
+    }
+
+    .glow-two {
+      background: #0dcaf0;
+      right: -180px;
+      bottom: -180px;
+      animation-delay: -4s;
+    }
+
+    @keyframes drift {
+      from { transform: translate(0,0) scale(1); }
+      to { transform: translate(40px,30px) scale(1.15); }
     }
 
     .blood-drop {
-      position: absolute;
-      top: -20px;
-      width: 12px;
-      height: 20px;
-      background: crimson;
-      border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
-      opacity: 0.8;
-      animation: fall linear infinite;
+      position: fixed;
+      top: -40px;
+      width: 9px;
+      height: 15px;
+      background: linear-gradient(145deg,#ff355d,#a80028);
+      border-radius: 65% 65% 55% 55% / 75% 75% 45% 45%;
+      opacity: 0;
+      pointer-events: none;
       z-index: 1;
+      box-shadow: 0 0 10px rgba(220,20,60,.35);
+      animation: bloodFall linear forwards;
     }
 
-    @keyframes fall {
-      0% { transform: translateY(-20px); opacity: 1; }
-      100% { transform: translateY(110vh); opacity: 0; }
+    @keyframes bloodFall {
+      0% {
+        transform: translate3d(0,-30px,0) rotate(0deg);
+        opacity: 0;
+      }
+      10% { opacity: .75; }
+      90% { opacity: .45; }
+      100% {
+        transform: translate3d(70px,110vh,0) rotate(180deg);
+        opacity: 0;
+      }
+    }
+
+    .btn-home {
+      position: fixed;
+      top: 22px;
+      right: 24px;
+      z-index: 30;
+      color: #dffaff;
+      border: 1px solid rgba(13,202,240,.65);
+      background: rgba(13,202,240,.06);
+      backdrop-filter: blur(10px);
+      border-radius: 10px;
+      padding: 9px 18px;
+      transition: all .25s ease;
+    }
+
+    .btn-home:hover {
+      background: #0dcaf0;
+      color: #071014;
+      border-color: #0dcaf0;
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(13,202,240,.22);
     }
 
     .login-card {
       position: relative;
       z-index: 10;
-      background: #141a20; /* Dark card */
-      padding: 40px;
-      border-radius: 20px;
-      box-shadow: 0 0 25px rgba(0,0,0,0.6);
+      width: min(390px,100%);
+      padding: 38px 36px 32px;
       text-align: center;
-      color: #e0e0e0;
-      width: 380px;
+      background: rgba(18,23,29,.88);
+      border: 1px solid rgba(255,255,255,.10);
+      border-radius: 24px;
+      box-shadow:
+        0 25px 70px rgba(0,0,0,.55),
+        0 0 35px rgba(13,202,240,.05);
+      backdrop-filter: blur(18px);
+      animation: cardEntry .7s cubic-bezier(.2,.8,.2,1) both;
     }
 
-    .login-card h2 {
-      color: #0dcaf0;
-      margin: 20px 0;
-      font-weight: 700;
+    @keyframes cardEntry {
+      from { opacity: 0; transform: translateY(25px) scale(.96); }
+      to { opacity: 1; transform: translateY(0) scale(1); }
     }
 
-    .btn-home {
-      position: absolute;
-      top: 20px;
-      right: 20px;
-      z-index: 20;
-      color: #0dcaf0;
-      border-color: #0dcaf0;
-    }
-
-    .btn-home:hover {
-      background: #0dcaf0;
-      color: #fff;
+    .logo-wrap {
+      width: 116px;
+      height: 116px;
+      margin: 0 auto 18px;
+      padding: 7px;
+      border-radius: 50%;
+      background: linear-gradient(135deg,rgba(13,202,240,.75),rgba(220,20,60,.65));
+      box-shadow: 0 0 30px rgba(13,202,240,.16);
+      animation: logoFloat 4s ease-in-out infinite;
     }
 
     .logo-big {
-      height: 160px;
-      margin-bottom: 20px;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
       border-radius: 50%;
-      box-shadow: 0 0 15px rgba(13,202,240,0.3);
+      background: #fff;
+      display: block;
+    }
+
+    @keyframes logoFloat {
+      0%,100% { transform: translateY(0) rotate(0deg); }
+      50% { transform: translateY(-6px) rotate(1deg); }
+    }
+
+    .login-card h2 {
+      margin: 8px 0;
+      color: #f8f9fa;
+      font-weight: 700;
+      letter-spacing: -.5px;
+    }
+
+    .subtitle {
+      margin-bottom: 26px;
+      color: #8e99a5;
+      font-size: .78rem;
+      letter-spacing: 1.6px;
+      text-transform: uppercase;
+    }
+
+    .form-label {
+      color: #b9c2ca;
+      font-size: .82rem;
+      font-weight: 600;
+      text-align: left;
+      display: block;
+      margin-bottom: 7px;
+    }
+
+    .input-group-custom {
+      position: relative;
+      margin-bottom: 17px;
+    }
+
+    .input-icon {
+      position: absolute;
+      left: 14px;
+      top: 50%;
+      transform: translateY(-15%);
+      z-index: 2;
+      opacity: .7;
+      font-size: .95rem;
     }
 
     .form-control {
-      background: #1e252c;
-      border: 1px solid #2d3a44;
+      min-height: 48px;
+      padding: 12px 14px 12px 42px;
+      background: rgba(30,37,44,.85);
+      border: 1px solid #303b46;
       color: #fff;
-      border-radius: 10px;
+      border-radius: 12px;
+      transition: all .25s ease;
     }
 
-    .form-control::placeholder {
-      color: #888;
-    }
+    .form-control::placeholder { color: #68737e; }
+
+    .form-control:hover { border-color: #465563; }
 
     .form-control:focus {
-      background: #252c34;
+      background: #202830;
       border-color: #0dcaf0;
       color: #fff;
-      box-shadow: 0 0 0 0.25rem rgba(13,202,240,0.25);
+      box-shadow: 0 0 0 3px rgba(13,202,240,.12);
+      outline: none;
     }
 
     .btn-login {
-      background: linear-gradient(90deg,#0dcaf0,#08a5c4);
+      min-height: 49px;
+      background: linear-gradient(100deg,#0dcaf0,#087f9a);
       border: none;
-      font-weight: 600;
+      font-weight: 700;
       color: #fff;
       border-radius: 12px;
-      padding: 12px;
-      transition: all 0.3s ease-in-out;
+      letter-spacing: .2px;
+      transition: all .25s ease;
+      position: relative;
+      overflow: hidden;
     }
+
+    .btn-login::after {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 55%;
+      height: 100%;
+      background: linear-gradient(90deg,transparent,rgba(255,255,255,.24),transparent);
+      transform: skewX(-20deg);
+      transition: left .55s ease;
+    }
+
+    .btn-login:hover::after { left: 140%; }
 
     .btn-login:hover {
-      background: linear-gradient(90deg,#08a5c4,#0dcaf0);
-      box-shadow: 0 6px 18px rgba(13,202,240,0.35);
       transform: translateY(-2px);
+      box-shadow: 0 10px 28px rgba(13,202,240,.22);
     }
+
+    .btn-login:active { transform: translateY(0); }
 
     .alert {
-      font-size: 0.95rem;
-      padding: 10px 14px;
-      border-radius: 10px;
+      font-size: .88rem;
+      padding: 11px 14px;
+      border-radius: 11px;
       text-align: center;
+      border: none;
+      margin-bottom: 18px;
+      animation: alertEntry .35s ease both;
     }
 
-    .text-muted {
-      color: #aaa !important;
+    @keyframes alertEntry {
+      from { opacity: 0; transform: translateY(-6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .security-note {
+      margin: 22px 0 0;
+      padding-top: 17px;
+      border-top: 1px solid rgba(255,255,255,.07);
+      color: #707b86;
+      font-size: .72rem;
+      letter-spacing: .5px;
+    }
+
+    .status-dot {
+      display: inline-block;
+      width: 7px;
+      height: 7px;
+      margin-right: 6px;
+      border-radius: 50%;
+      background: #20c997;
+      box-shadow: 0 0 8px rgba(32,201,151,.65);
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+      0%,100% { opacity: 1; transform: scale(1); }
+      50% { opacity: .45; transform: scale(.75); }
+    }
+
+    @media (max-width:576px) {
+      body { padding: 16px; }
+
+      .btn-home {
+        top: 14px;
+        right: 14px;
+        padding: 7px 13px;
+        font-size: .85rem;
+      }
+
+      .login-card {
+        padding: 30px 24px 26px;
+        border-radius: 20px;
+      }
+
+      .logo-wrap {
+        width: 100px;
+        height: 100px;
+      }
+    }
+
+    @media (prefers-reduced-motion:reduce) {
+      *,*::before,*::after {
+        animation-duration: .01ms !important;
+        animation-iteration-count: 1 !important;
+      }
     }
   </style>
 </head>
-<body>
-  <!-- Home Button -->
-  <a href="{{ url_for('home') }}" class="btn btn-outline-info btn-home">Home</a>
 
-  <!-- Falling Blood Drops -->
+<body>
+
+  <div class="glow glow-one"></div>
+  <div class="glow glow-two"></div>
+
+  <a href="{{ url_for('home') }}" class="btn btn-home">← Home</a>
+
+  <main class="login-card">
+
+    <div class="logo-wrap">
+      <img
+        src="{{ url_for('static', filename='images/logo.jpeg') }}"
+        alt="Rakt Dhara Logo"
+        class="logo-big">
+    </div>
+
+    <h2>Admin Login</h2>
+    <div class="subtitle">Rakt Dhara Control Center</div>
+
+    {% if error %}
+      <div class="alert alert-danger" role="alert">
+        {{ error }}
+      </div>
+    {% endif %}
+
+    <form method="POST" autocomplete="on">
+
+      <div class="input-group-custom">
+        <label class="form-label" for="admin-email">Email Address</label>
+        <span class="input-icon">✉</span>
+        <input
+          type="email"
+          id="admin-email"
+          name="email"
+          class="form-control"
+          placeholder="Enter admin email"
+          autocomplete="username"
+          required>
+      </div>
+
+      <div class="input-group-custom">
+        <label class="form-label" for="admin-password">Password</label>
+        <span class="input-icon">🔒</span>
+        <input
+          type="password"
+          id="admin-password"
+          name="password"
+          class="form-control"
+          placeholder="Enter admin password"
+          autocomplete="current-password"
+          required>
+      </div>
+
+      <button type="submit" class="btn btn-login w-100">
+        🔐 Secure Admin Login
+      </button>
+
+    </form>
+
+    <div class="security-note">
+      <span class="status-dot"></span>
+      Authorized administrative access only
+    </div>
+
+  </main>
+
   <script>
-    function createDrop() {
-      const drop = document.createElement("div");
-      drop.classList.add("blood-drop");
-      drop.style.left = Math.random() * window.innerWidth + "px";
-      drop.style.animationDuration = 2 + Math.random() * 3 + "s";
-      document.body.appendChild(drop);
-      setTimeout(() => drop.remove(), 5000);
-    }
-    setInterval(createDrop, 300);
+    (() => {
+      const MAX_DROPS = 18;
+      let activeDrops = 0;
+
+      function createDrop() {
+        if (activeDrops >= MAX_DROPS) return;
+
+        const drop = document.createElement("div");
+        drop.className = "blood-drop";
+
+        const size = 6 + Math.random() * 7;
+        const duration = 4 + Math.random() * 5;
+        const delay = Math.random() * 0.5;
+
+        drop.style.left = Math.random() * 100 + "vw";
+        drop.style.width = size + "px";
+        drop.style.height = (size * 1.45) + "px";
+        drop.style.animationDuration = duration + "s";
+        drop.style.animationDelay = delay + "s";
+
+        document.body.appendChild(drop);
+        activeDrops++;
+
+        setTimeout(() => {
+          drop.remove();
+          activeDrops--;
+        }, (duration + delay) * 1000 + 500);
+      }
+
+      for (let i = 0; i < 6; i++) {
+        setTimeout(createDrop, i * 500);
+      }
+
+      setInterval(createDrop, 650);
+    })();
   </script>
 
-  <!-- Login Card -->
-  <div class="login-card">
-    <img src="{{ url_for('static', filename='images/logo.jpeg') }}" alt="Rakt Dhara Logo" class="logo-big">
-    <h2>Admin Login</h2>
-    {% if error %}
-      <div class="alert alert-danger">{{ error }}</div>
-    {% endif %}
-    <form method="POST">
-      <div class="mb-3">
-        <input type="email" name="email" class="form-control" placeholder="Email" required>
-      </div>
-      <div class="mb-3">
-        <input type="password" name="password" class="form-control" placeholder="Password" required>
-      </div>
-      <button type="submit" class="btn btn-login w-100">Login</button>
-    </form>
-    <p class="mt-3 text-muted small">Authorized access only</p>
-  </div>
 </body>
 </html>

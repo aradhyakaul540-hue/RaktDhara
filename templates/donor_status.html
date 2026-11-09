@@ -1,239 +1,2184 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta charset="utf-8"/>
-  <meta name="viewport" content="width=device-width,initial-scale=1"/>
-  <title>Raktadhara — Donor Dashboard</title>
+  <link rel="icon" type="image/x-icon"
+      href="{{ url_for('static', filename='logo_circular.ico') }}">
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>RaktDhara — Donor Dashboard</title>
 
   <!-- Google Fonts -->
-  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 
   <!-- Bootstrap -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
 
   <!-- Font Awesome -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
   <style>
-    html { scroll-behavior: smooth; }
-    body { background:#f8f9fa; font-family:'Montserrat',sans-serif; display:flex; flex-direction:column; min-height:100vh;}
-    .topbar { background:#0dcaf0; padding:12px 0; color:white; box-shadow:0 2px 8px rgba(0,0,0,0.1);}
-    .brand-row { display:flex; align-items:center; gap:12px;}
-    .brand-logo { width:60px; height:60px; border-radius:50%; object-fit:cover;}
-    .brand-title { font-weight:800; font-size:1.25rem;}
-    .brand-accent { color:#fff176;}
-    main { flex:1; padding:40px 0;}
-    .status-card { background:#fff; border-radius:16px; padding:32px; max-width:1100px; margin:auto; box-shadow:0 12px 30px rgba(0,0,0,0.1);}
-    .status-card h3 { color:#c80f2e; font-weight:800; margin-bottom:20px; text-align:center;}
-    .stats-row { margin-bottom:30px;}
-    .stat-box { background:#f1f5f9; border-radius:12px; padding:20px; text-align:center; box-shadow:0 2px 6px rgba(0,0,0,0.05);}
-    .stat-box h4 { font-weight:700; margin-top:10px;}
-    .chart-container { margin-top:30px;}
-    footer { background:#041119; color:#ccc; padding:25px 0; text-align:center;}
-    /* Star donor highlight */
-    .stat-box i.fa-star { filter: drop-shadow(0 0 8px gold); }
+
+    /* =========================================================
+       ROOT
+    ========================================================= */
+
+    :root {
+      --blood: #d90429;
+      --blood-dark: #8b001b;
+      --blood-light: #ff4d6d;
+
+      --cyan: #00d9ff;
+      --green: #35d07f;
+      --yellow: #ffc107;
+
+      --bg: #05080c;
+      --card: rgba(13, 18, 25, 0.88);
+      --card-soft: rgba(255,255,255,0.035);
+
+      --border: rgba(255,255,255,0.09);
+
+      --text: #f4f7fa;
+      --muted: #9aa6b2;
+    }
+
+
+    /* =========================================================
+       GLOBAL
+    ========================================================= */
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+
+      font-family: 'Montserrat', sans-serif;
+
+      background:
+        radial-gradient(
+          circle at 10% 10%,
+          rgba(217,4,41,0.13),
+          transparent 30%
+        ),
+        radial-gradient(
+          circle at 90% 80%,
+          rgba(0,217,255,0.08),
+          transparent 30%
+        ),
+        var(--bg);
+
+      color: var(--text);
+
+      overflow-x: hidden;
+    }
+
+
+    /* =========================================================
+       TECH GRID
+    ========================================================= */
+
+    body::before {
+      content: "";
+
+      position: fixed;
+      inset: 0;
+
+      pointer-events: none;
+
+      background-image:
+        linear-gradient(
+          rgba(255,255,255,0.025) 1px,
+          transparent 1px
+        ),
+        linear-gradient(
+          90deg,
+          rgba(255,255,255,0.025) 1px,
+          transparent 1px
+        );
+
+      background-size: 45px 45px;
+
+      mask-image: linear-gradient(
+        to bottom,
+        rgba(0,0,0,1),
+        rgba(0,0,0,0.15)
+      );
+
+      z-index: 0;
+    }
+
+
+    /* =========================================================
+       AMBIENT GLOW
+    ========================================================= */
+
+    .ambient {
+      position: fixed;
+
+      width: 420px;
+      height: 420px;
+
+      border-radius: 50%;
+
+      filter: blur(110px);
+
+      opacity: 0.13;
+
+      pointer-events: none;
+
+      z-index: 0;
+    }
+
+    .ambient-red {
+      background: var(--blood);
+
+      top: -200px;
+      left: -170px;
+    }
+
+    .ambient-blue {
+      background: var(--cyan);
+
+      right: -200px;
+      bottom: -200px;
+    }
+
+
+    /* =========================================================
+       NAVBAR
+    ========================================================= */
+
+    .topbar {
+      position: sticky;
+
+      top: 0;
+
+      z-index: 100;
+
+      background: rgba(5,8,12,0.88);
+
+      backdrop-filter: blur(18px);
+
+      border-bottom: 1px solid var(--border);
+
+      box-shadow:
+        0 8px 30px rgba(0,0,0,0.25);
+    }
+
+    .navbar-inner {
+      min-height: 78px;
+
+      display: flex;
+
+      align-items: center;
+
+      justify-content: space-between;
+
+      gap: 20px;
+    }
+
+
+    /* =========================================================
+       BRAND
+    ========================================================= */
+
+    .brand-row {
+      display: flex;
+
+      align-items: center;
+
+      gap: 12px;
+
+      text-decoration: none;
+
+      color: #fff;
+    }
+
+    .brand-logo {
+      width: 48px;
+      height: 48px;
+
+      border-radius: 50%;
+
+      object-fit: cover;
+
+      border: 1px solid rgba(255,255,255,0.12);
+
+      box-shadow:
+        0 0 18px rgba(217,4,41,0.35);
+    }
+
+    .brand-name {
+      font-size: 1.05rem;
+
+      font-weight: 800;
+
+      letter-spacing: 0.5px;
+    }
+
+    .brand-name span {
+      color: var(--blood-light);
+    }
+
+    .brand-status {
+      display: block;
+
+      color: #71808d;
+
+      font-size: 0.58rem;
+
+      letter-spacing: 1.2px;
+
+      margin-top: 2px;
+    }
+
+
+    /* =========================================================
+       NAV BUTTONS
+    ========================================================= */
+
+    .nav-actions {
+      display: flex;
+
+      align-items: center;
+
+      gap: 7px;
+
+      flex-wrap: wrap;
+
+      justify-content: flex-end;
+    }
+
+    .nav-btn {
+      border-radius: 9px;
+
+      padding: 7px 12px;
+
+      font-size: 0.72rem;
+
+      font-weight: 600;
+
+      border: 1px solid rgba(255,255,255,0.11);
+
+      background: rgba(255,255,255,0.035);
+
+      color: #dce3e8;
+
+      text-decoration: none;
+
+      transition: 0.25s ease;
+    }
+
+    .nav-btn:hover {
+      color: #fff;
+
+      border-color: rgba(255,255,255,0.28);
+
+      background: rgba(255,255,255,0.07);
+
+      transform: translateY(-1px);
+    }
+
+    .nav-btn.red:hover {
+      border-color: var(--blood-light);
+
+      box-shadow:
+        0 0 15px rgba(217,4,41,0.15);
+    }
+
+    .nav-btn.cyan:hover {
+      border-color: var(--cyan);
+
+      box-shadow:
+        0 0 15px rgba(0,217,255,0.12);
+    }
+
+
+    /* =========================================================
+       MAIN
+    ========================================================= */
+
+    main {
+      position: relative;
+
+      z-index: 2;
+
+      padding: 55px 0 70px;
+    }
+
+    .dashboard-container {
+      max-width: 1180px;
+      margin: auto;
+    }
+
+
+    /* =========================================================
+       PAGE HEADER
+    ========================================================= */
+
+    .page-header {
+      text-align: center;
+
+      max-width: 720px;
+
+      margin: 0 auto 35px;
+
+      animation: fadeUp 0.7s ease both;
+    }
+
+    @keyframes fadeUp {
+
+      from {
+        opacity: 0;
+        transform: translateY(18px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .status-chip {
+      display: inline-flex;
+
+      align-items: center;
+
+      gap: 7px;
+
+      padding: 6px 12px;
+
+      border-radius: 50px;
+
+      background: rgba(217,4,41,0.08);
+
+      border: 1px solid rgba(217,4,41,0.22);
+
+      color: #ff9dae;
+
+      font-size: 0.64rem;
+
+      font-weight: 700;
+
+      letter-spacing: 1px;
+
+      margin-bottom: 15px;
+    }
+
+    .status-chip i {
+      color: var(--blood-light);
+
+      animation: pulse 1.7s infinite;
+    }
+
+    @keyframes pulse {
+
+      0%, 100% {
+        opacity: 1;
+      }
+
+      50% {
+        opacity: 0.35;
+      }
+    }
+
+    .page-header h1 {
+      font-size: clamp(1.7rem, 4vw, 2.5rem);
+
+      font-weight: 800;
+
+      margin: 0;
+
+      background: linear-gradient(
+        135deg,
+        #fff,
+        #ffd9df,
+        var(--blood-light)
+      );
+
+      -webkit-background-clip: text;
+      background-clip: text;
+
+      -webkit-text-fill-color: transparent;
+    }
+
+    .page-header p {
+      color: var(--muted);
+
+      font-size: 0.82rem;
+
+      margin-top: 10px;
+    }
+
+
+    /* =========================================================
+       GLASS SECTION
+    ========================================================= */
+
+    .dashboard-card {
+      position: relative;
+
+      background: var(--card);
+
+      border: 1px solid var(--border);
+
+      border-radius: 20px;
+
+      padding: 28px;
+
+      margin-bottom: 24px;
+
+      backdrop-filter: blur(20px);
+
+      box-shadow:
+        0 20px 60px rgba(0,0,0,0.3),
+        inset 0 1px 0 rgba(255,255,255,0.04);
+
+      animation: fadeUp 0.7s ease both;
+    }
+
+    .dashboard-card::before {
+      content: "";
+
+      position: absolute;
+
+      top: 0;
+      left: 12%;
+      right: 12%;
+
+      height: 1px;
+
+      background: linear-gradient(
+        90deg,
+        transparent,
+        rgba(217,4,41,0.8),
+        transparent
+      );
+    }
+
+    .section-title {
+      display: flex;
+
+      align-items: center;
+
+      justify-content: center;
+
+      gap: 10px;
+
+      color: #fff;
+
+      font-size: 1.05rem;
+
+      font-weight: 800;
+
+      margin-bottom: 25px;
+    }
+
+    .section-title i {
+      color: var(--blood-light);
+
+      filter:
+        drop-shadow(
+          0 0 7px rgba(217,4,41,0.55)
+        );
+    }
+
+
+    /* =========================================================
+       STAT CARDS
+    ========================================================= */
+
+    .stat-box {
+      height: 100%;
+
+      position: relative;
+
+      padding: 23px 18px;
+
+      text-align: center;
+
+      border-radius: 15px;
+
+      background: var(--card-soft);
+
+      border: 1px solid rgba(255,255,255,0.07);
+
+      overflow: hidden;
+
+      transition: 0.3s ease;
+    }
+
+    .stat-box::after {
+      content: "";
+
+      position: absolute;
+
+      width: 80px;
+      height: 80px;
+
+      right: -30px;
+      bottom: -35px;
+
+      border-radius: 50%;
+
+      background: rgba(217,4,41,0.08);
+    }
+
+    .stat-box:hover {
+      transform: translateY(-4px);
+
+      border-color: rgba(217,4,41,0.35);
+
+      box-shadow:
+        0 12px 30px rgba(0,0,0,0.25);
+    }
+
+    .stat-icon {
+      width: 52px;
+      height: 52px;
+
+      margin: auto;
+
+      display: flex;
+
+      align-items: center;
+      justify-content: center;
+
+      border-radius: 14px;
+
+      background: rgba(217,4,41,0.10);
+
+      color: var(--blood-light);
+
+      font-size: 1.25rem;
+
+      border: 1px solid rgba(217,4,41,0.18);
+    }
+
+    .stat-icon.cyan {
+      color: var(--cyan);
+
+      background: rgba(0,217,255,0.07);
+
+      border-color: rgba(0,217,255,0.15);
+    }
+
+    .stat-icon.green {
+      color: var(--green);
+
+      background: rgba(53,208,127,0.07);
+
+      border-color: rgba(53,208,127,0.15);
+    }
+
+    .stat-number {
+      font-size: 1.65rem;
+
+      font-weight: 800;
+
+      margin-top: 13px;
+
+      color: #fff;
+    }
+
+    .stat-label {
+      margin: 4px 0 0;
+
+      color: var(--muted);
+
+      font-size: 0.7rem;
+
+      font-weight: 500;
+    }
+
+
+    /* =========================================================
+       STAR DONORS
+    ========================================================= */
+
+    .star-card {
+      height: 100%;
+
+      padding: 20px;
+
+      text-align: center;
+
+      border-radius: 15px;
+
+      background:
+        linear-gradient(
+          145deg,
+          rgba(255,193,7,0.08),
+          rgba(255,255,255,0.025)
+        );
+
+      border: 1px solid rgba(255,193,7,0.14);
+
+      transition: 0.3s ease;
+    }
+
+    .star-card:hover {
+      transform: translateY(-4px);
+
+      border-color: rgba(255,193,7,0.38);
+
+      box-shadow:
+        0 12px 30px rgba(255,193,7,0.08);
+    }
+
+    .star-icon {
+      font-size: 1.7rem;
+
+      color: var(--yellow);
+
+      filter:
+        drop-shadow(
+          0 0 8px rgba(255,193,7,0.7)
+        );
+    }
+
+    .star-card h5 {
+      margin: 12px 0 5px;
+
+      font-size: 0.85rem;
+
+      font-weight: 700;
+    }
+
+    .blood-badge {
+      display: inline-block;
+
+      padding: 4px 9px;
+
+      border-radius: 6px;
+
+      color: #ffb5c0;
+
+      background: rgba(217,4,41,0.10);
+
+      border: 1px solid rgba(217,4,41,0.18);
+
+      font-size: 0.65rem;
+
+      font-weight: 700;
+    }
+
+
+    /* =========================================================
+       SEARCH
+    ========================================================= */
+
+    .ticket-form {
+      max-width: 680px;
+
+      margin: 0 auto 30px;
+    }
+
+    .ticket-input {
+      height: 48px;
+
+      background: rgba(255,255,255,0.045);
+
+      border: 1px solid rgba(255,255,255,0.10);
+
+      color: #fff;
+
+      border-radius: 10px 0 0 10px;
+    }
+
+    .ticket-input::placeholder {
+      color: #6f7b86;
+    }
+
+    .ticket-input:focus {
+      background: rgba(255,255,255,0.06);
+
+      border-color: var(--blood-light);
+
+      color: #fff;
+
+      box-shadow:
+        0 0 0 3px rgba(217,4,41,0.10);
+    }
+
+    .ticket-button {
+      border: none;
+
+      padding: 0 22px;
+
+      border-radius: 0 10px 10px 0;
+
+      background:
+        linear-gradient(
+          100deg,
+          var(--blood-dark),
+          var(--blood),
+          var(--blood-light)
+        );
+
+      color: #fff;
+
+      font-size: 0.78rem;
+
+      font-weight: 700;
+    }
+
+    .ticket-button:hover {
+      color: #fff;
+
+      box-shadow:
+        0 5px 20px rgba(217,4,41,0.25);
+    }
+
+
+    /* =========================================================
+       CHART AREA
+    ========================================================= */
+
+    .chart-box {
+      padding: 22px;
+
+      min-height: 320px;
+
+      display: flex;
+
+      align-items: center;
+      justify-content: center;
+
+      border-radius: 15px;
+
+      background: rgba(255,255,255,0.025);
+
+      border: 1px solid rgba(255,255,255,0.07);
+    }
+
+    .chart-box canvas {
+      max-height: 270px;
+    }
+
+
+    /* =========================================================
+       REQUEST INFORMATION
+    ========================================================= */
+
+    .request-info {
+      margin-top: 25px;
+
+      padding: 22px;
+
+      border-radius: 15px;
+
+      background: rgba(255,255,255,0.025);
+
+      border: 1px solid rgba(255,255,255,0.07);
+    }
+
+    .request-info-title {
+      font-size: 0.9rem;
+
+      font-weight: 700;
+
+      margin-bottom: 17px;
+
+      color: #fff;
+    }
+
+    .info-row {
+      display: flex;
+
+      justify-content: space-between;
+
+      gap: 15px;
+
+      padding: 9px 0;
+
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+
+      font-size: 0.75rem;
+    }
+
+    .info-row:last-child {
+      border-bottom: none;
+    }
+
+    .info-label {
+      color: var(--muted);
+    }
+
+    .info-value {
+      color: #e8edf1;
+
+      font-weight: 600;
+
+      text-align: right;
+    }
+
+    .status-open {
+      color: var(--green);
+
+      background: rgba(53,208,127,0.08);
+
+      border: 1px solid rgba(53,208,127,0.2);
+
+      padding: 4px 9px;
+
+      border-radius: 6px;
+
+      font-size: 0.65rem;
+    }
+
+    .status-closed {
+      color: #ff8d9d;
+
+      background: rgba(217,4,41,0.08);
+
+      border: 1px solid rgba(217,4,41,0.2);
+
+      padding: 4px 9px;
+
+      border-radius: 6px;
+
+      font-size: 0.65rem;
+    }
+
+
+    /* =========================================================
+       CLOSE TICKET
+    ========================================================= */
+
+    .close-ticket {
+      margin-top: 15px;
+
+      border: 1px solid rgba(217,4,41,0.3);
+
+      background: rgba(217,4,41,0.08);
+
+      color: #ff9baa;
+
+      border-radius: 9px;
+
+      padding: 8px 15px;
+
+      font-size: 0.72rem;
+
+      font-weight: 600;
+
+      transition: 0.25s ease;
+    }
+
+    .close-ticket:hover {
+      color: #fff;
+
+      background: rgba(217,4,41,0.18);
+
+      border-color: var(--blood-light);
+    }
+
+
+    /* =========================================================
+       ERROR
+    ========================================================= */
+
+    .error-alert {
+      max-width: 680px;
+
+      margin: 0 auto;
+
+      border-radius: 11px;
+
+      background: rgba(217,4,41,0.09);
+
+      border: 1px solid rgba(217,4,41,0.25);
+
+      color: #ffadb9;
+
+      font-size: 0.76rem;
+    }
+
+
+    /* =========================================================
+       FOOTER
+    ========================================================= */
+
+    footer {
+      position: relative;
+
+      z-index: 3;
+
+      border-top: 1px solid var(--border);
+
+      background: rgba(3,6,9,0.88);
+
+      padding: 24px 0;
+
+      text-align: center;
+
+      color: #68737d;
+
+      font-size: 0.68rem;
+    }
+
+    footer strong {
+      color: #9aa6b2;
+    }
+
+
+    /* =========================================================
+       BLOOD PARTICLES
+    ========================================================= */
+
+    .blood-drop {
+      position: fixed;
+
+      top: -30px;
+
+      width: 5px;
+      height: 12px;
+
+      background:
+        linear-gradient(
+          to bottom,
+          var(--blood-light),
+          var(--blood-dark)
+        );
+
+      border-radius: 70% 70% 55% 55%;
+
+      pointer-events: none;
+
+      z-index: 1;
+
+      filter:
+        drop-shadow(
+          0 0 5px rgba(217,4,41,0.6)
+        );
+
+      animation:
+        bloodFall linear forwards;
+    }
+
+    @keyframes bloodFall {
+
+      0% {
+        transform: translateY(-30px);
+        opacity: 0;
+      }
+
+      10% {
+        opacity: 0.45;
+      }
+
+      90% {
+        opacity: 0.2;
+      }
+
+      100% {
+        transform: translateY(110vh);
+        opacity: 0;
+      }
+    }
+
+
+    /* =========================================================
+       RESPONSIVE
+    ========================================================= */
+
+    @media (max-width: 900px) {
+
+      .navbar-inner {
+        padding-top: 12px;
+        padding-bottom: 12px;
+
+        align-items: flex-start;
+      }
+
+      .nav-actions {
+        max-width: 520px;
+      }
+
+      main {
+        padding-top: 40px;
+      }
+    }
+
+    @media (max-width: 650px) {
+
+      .navbar-inner {
+        flex-direction: column;
+
+        align-items: center;
+      }
+
+      .nav-actions {
+        justify-content: center;
+      }
+
+      .dashboard-card {
+        padding: 20px 15px;
+
+        border-radius: 17px;
+      }
+
+      .chart-box {
+        min-height: 270px;
+
+        margin-bottom: 15px;
+      }
+
+      .info-row {
+        flex-direction: column;
+
+        gap: 3px;
+      }
+
+      .info-value {
+        text-align: left;
+      }
+
+      .ticket-input {
+        border-radius: 10px 0 0 10px;
+      }
+    }
+
+    @media (max-width: 480px) {
+
+      .nav-actions {
+        width: 100%;
+      }
+
+      .nav-btn {
+        flex: 1;
+
+        text-align: center;
+
+        min-width: 90px;
+      }
+
+      .page-header h1 {
+        font-size: 1.55rem;
+      }
+
+      .brand-logo {
+        width: 42px;
+        height: 42px;
+      }
+
+      .brand-name {
+        font-size: 0.95rem;
+      }
+
+      .ticket-button {
+        padding: 0 14px;
+      }
+    }
+
+
+    /* =========================================================
+       ULTRA PRO MAX MOTION LAYER
+    ========================================================= */
+
+    :root {
+      --ease-pro: cubic-bezier(.22, 1, .36, 1);
+      --shadow-pro: 0 24px 70px rgba(0,0,0,.34);
+    }
+
+    body {
+      background-attachment: fixed;
+    }
+
+    body::after {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 999;
+      opacity: .035;
+      background-image:
+        radial-gradient(rgba(255,255,255,.8) .5px, transparent .5px);
+      background-size: 5px 5px;
+      mix-blend-mode: screen;
+    }
+
+    .topbar {
+      transition: background .35s ease, box-shadow .35s ease;
+    }
+
+    .topbar.scrolled {
+      background: rgba(3,6,10,.96);
+      box-shadow: 0 12px 45px rgba(0,0,0,.38);
+    }
+
+    .brand-logo {
+      animation: logoBreath 3.2s ease-in-out infinite;
+      transition: transform .35s var(--ease-pro), filter .35s ease;
+    }
+
+    .brand-row:hover .brand-logo {
+      transform: rotate(-5deg) scale(1.06);
+      filter: brightness(1.15);
+    }
+
+    @keyframes logoBreath {
+      0%,100% { box-shadow: 0 0 18px rgba(217,4,41,.28); }
+      50% { box-shadow: 0 0 32px rgba(217,4,41,.58), 0 0 60px rgba(217,4,41,.10); }
+    }
+
+    .nav-btn {
+      position: relative;
+      overflow: hidden;
+    }
+
+    .nav-btn::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(110deg, transparent 20%, rgba(255,255,255,.14) 50%, transparent 80%);
+      transform: translateX(-120%);
+      transition: transform .55s ease;
+    }
+
+    .nav-btn:hover::before {
+      transform: translateX(120%);
+    }
+
+    .dashboard-card {
+      overflow: hidden;
+      box-shadow: var(--shadow-pro), inset 0 1px 0 rgba(255,255,255,.045);
+      transition: transform .5s var(--ease-pro), border-color .35s ease, box-shadow .5s ease;
+    }
+
+    .dashboard-card:hover {
+      border-color: rgba(255,255,255,.13);
+      box-shadow: 0 28px 85px rgba(0,0,0,.42), inset 0 1px 0 rgba(255,255,255,.055);
+    }
+
+    .dashboard-card::after {
+      content: "";
+      position: absolute;
+      width: 240px;
+      height: 240px;
+      right: -160px;
+      top: -160px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(217,4,41,.13), transparent 68%);
+      pointer-events: none;
+      animation: cardOrb 8s ease-in-out infinite;
+    }
+
+    @keyframes cardOrb {
+      0%,100% { transform: translate(0,0) scale(1); opacity:.55; }
+      50% { transform: translate(-45px,45px) scale(1.25); opacity:1; }
+    }
+
+    .stat-box, .star-card, .chart-box, .request-info {
+      transition: transform .45s var(--ease-pro), box-shadow .45s ease, border-color .35s ease;
+    }
+
+    .stat-box:hover, .star-card:hover {
+      transform: translateY(-8px) scale(1.015);
+      box-shadow: 0 18px 42px rgba(0,0,0,.34);
+    }
+
+    .stat-icon {
+      transition: transform .5s var(--ease-pro), box-shadow .4s ease;
+    }
+
+    .stat-box:hover .stat-icon {
+      transform: translateY(-3px) rotate(-4deg) scale(1.08);
+      box-shadow: 0 0 25px rgba(217,4,41,.16);
+    }
+
+    .star-icon {
+      animation: starFloat 2.8s ease-in-out infinite;
+    }
+
+    @keyframes starFloat {
+      0%,100% { transform: translateY(0) rotate(-4deg); }
+      50% { transform: translateY(-5px) rotate(4deg); }
+    }
+
+    .ticket-form {
+      position: relative;
+    }
+
+    .ticket-form::before {
+      content: "";
+      position: absolute;
+      inset: -2px;
+      border-radius: 13px;
+      background: linear-gradient(90deg, transparent, rgba(217,4,41,.45), transparent);
+      opacity: 0;
+      z-index: -1;
+      filter: blur(8px);
+      transition: opacity .3s ease;
+    }
+
+    .ticket-form:focus-within::before {
+      opacity: 1;
+    }
+
+    .ticket-button {
+      position: relative;
+      overflow: hidden;
+      transition: transform .25s var(--ease-pro), box-shadow .3s ease;
+    }
+
+    .ticket-button::after {
+      content: "";
+      position: absolute;
+      width: 30px;
+      height: 160%;
+      top: -30%;
+      left: -60px;
+      transform: rotate(20deg);
+      background: rgba(255,255,255,.22);
+      filter: blur(4px);
+      transition: left .65s ease;
+    }
+
+    .ticket-button:hover {
+      transform: translateY(-2px);
+    }
+
+    .ticket-button:hover::after {
+      left: calc(100% + 60px);
+    }
+
+    .chart-box {
+      position: relative;
+      overflow: hidden;
+    }
+
+    .chart-box::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(120deg, transparent 0%, rgba(255,255,255,.035) 48%, transparent 55%);
+      transform: translateX(-100%);
+      animation: chartSweep 5.5s ease-in-out infinite;
+      pointer-events: none;
+    }
+
+    @keyframes chartSweep {
+      0%, 55% { transform: translateX(-100%); }
+      80%,100% { transform: translateX(100%); }
+    }
+
+    .request-info {
+      animation: requestReveal .65s var(--ease-pro) both;
+    }
+
+    @keyframes requestReveal {
+      from { opacity: 0; transform: translateY(15px) scale(.985); }
+      to { opacity: 1; transform: translateY(0) scale(1); }
+    }
+
+    .status-open, .status-closed {
+      transition: transform .25s ease, box-shadow .25s ease;
+    }
+
+    .status-open:hover, .status-closed:hover {
+      transform: scale(1.04);
+    }
+
+    .status-open {
+      box-shadow: 0 0 0 rgba(53,208,127,0);
+      animation: statusGlow 2.2s ease-in-out infinite;
+    }
+
+    @keyframes statusGlow {
+      50% { box-shadow: 0 0 18px rgba(53,208,127,.12); }
+    }
+
+    .error-alert {
+      animation: shakeIn .5s var(--ease-pro) both;
+    }
+
+    @keyframes shakeIn {
+      0% { opacity:0; transform: translateX(-12px); }
+      55% { transform: translateX(5px); }
+      100% { opacity:1; transform: translateX(0); }
+    }
+
+    .page-header h1 {
+      text-shadow: 0 0 35px rgba(217,4,41,.16);
+    }
+
+    .page-header .status-chip {
+      box-shadow: 0 0 0 rgba(217,4,41,0);
+      animation: chipGlow 2.6s ease-in-out infinite;
+    }
+
+    @keyframes chipGlow {
+      50% { box-shadow: 0 0 24px rgba(217,4,41,.10); }
+    }
+
+    .reveal {
+      opacity: 0;
+      transform: translateY(24px);
+      transition: opacity .7s ease, transform .7s var(--ease-pro);
+    }
+
+    .reveal.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .ripple {
+      position: absolute;
+      border-radius: 50%;
+      pointer-events: none;
+      transform: scale(0);
+      background: rgba(255,255,255,.28);
+      animation: ripple .65s ease-out forwards;
+    }
+
+    @keyframes ripple {
+      to { transform: scale(5); opacity: 0; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: .001ms !important;
+        animation-iteration-count: 1 !important;
+        scroll-behavior: auto !important;
+        transition-duration: .001ms !important;
+      }
+    }
+
   </style>
 </head>
+
 <body>
-  <!-- Navbar -->
+
+  <!-- Ambient Background -->
+  <div class="ambient ambient-red"></div>
+  <div class="ambient ambient-blue"></div>
+
+
+  <!-- =======================================================
+       NAVBAR
+  ======================================================== -->
+
   <header class="topbar">
-    <div class="container d-flex justify-content-between align-items-center">
-      <div class="brand-row">
-        <img src="{{ url_for('static', filename='images/logo.jpeg') }}" alt="Logo" class="brand-logo">
-        <div class="brand-title">Rakt<span class="brand-accent">dhara</span></div>
-      </div>
-      <div>
-        <a class="btn btn-outline-light btn-sm" href="/">Home</a>
-        <a class="btn btn-outline-light btn-sm ms-2" href="/login">User</a>
-        <a class="btn btn-warning btn-sm ms-2" href="/admin">Admin</a>
-        <a class="btn btn-warning btn-sm ms-2" href="#donorStats">Donor Portal</a>
-        <a class="btn btn-danger btn-sm ms-2" href="#ticketCharts">Ticket Status</a>
-      </div>
+
+    <div class="container navbar-inner">
+
+      <a href="/" class="brand-row">
+
+        <img
+          src="{{ url_for('static', filename='images/logo.jpeg') }}"
+          alt="RaktDhara Logo"
+          class="brand-logo"
+        >
+
+        <div>
+          <div class="brand-name">
+            Rakt<span>Dhara</span>
+          </div>
+
+          <span class="brand-status">
+            BLOOD NETWORK SYSTEM
+          </span>
+        </div>
+
+      </a>
+
+
+      <nav class="nav-actions">
+
+        <a href="/" class="nav-btn">
+          <i class="fa-solid fa-house me-1"></i>
+          Home
+        </a>
+
+        <a href="/login" class="nav-btn cyan">
+          <i class="fa-solid fa-user me-1"></i>
+          User
+        </a>
+
+        <a href="/admin" class="nav-btn">
+          <i class="fa-solid fa-shield-halved me-1"></i>
+          Admin
+        </a>
+
+        <a href="#donorStats" class="nav-btn red">
+          <i class="fa-solid fa-chart-line me-1"></i>
+          Donor Portal
+        </a>
+
+        <a href="#ticketCharts" class="nav-btn red">
+          <i class="fa-solid fa-ticket me-1"></i>
+          Ticket Status
+        </a>
+
+      </nav>
+
     </div>
+
   </header>
 
-  <!-- Main Section -->
+
+  <!-- =======================================================
+       MAIN
+  ======================================================== -->
+
   <main>
 
-    <!-- Donor Portal -->
-    <section id="donorStats" class="status-card">
-      <h3>👥 Donor Portal Overview</h3>
-      <div class="row stats-row">
-        <div class="col-md-4">
-          <div class="stat-box">
-            <i class="fa fa-users fa-2x text-primary"></i>
-            <h4>{{ total_donors }}</h4>
-            <p>Total Donors</p>
-          </div>
-        </div>
-        <div class="col-md-4">
-          <div class="stat-box">
-            <i class="fa fa-envelope-open fa-2x text-success"></i>
-            <h4>{{ total_requests }}</h4>
-            <p>Total Requests</p>
-          </div>
-        </div>
-        <div class="col-md-4">
-          <div class="stat-box">
-            <i class="fa fa-heart fa-2x text-danger"></i>
-            <h4>{{ successful_donations }}</h4>
-            <p>Successful Donations</p>
-          </div>
-        </div>
-      </div>
-    </section>
+    <div class="container dashboard-container">
 
-    <!-- ⭐ Star Donors -->
-    <section id="starDonors" class="status-card mt-4">
-      <h3>🌟 Star Donors</h3>
-      <div class="row">
-        {% if star_donors %}
-          {% for donor in star_donors %}
-            <div class="col-md-3 mb-3">
-              <div class="stat-box">
-                <i class="fa fa-star text-warning fa-2x"></i>
-                <h5 class="mt-2">{{ donor.name }}</h5>
-                <p class="text-muted">{{ donor.blood_group }}</p>
-              </div>
-            </div>
-          {% endfor %}
-        {% else %}
-          <p class="text-center text-muted">No Star Donors yet.</p>
-        {% endif %}
-      </div>
-    </section>
 
-    <!-- Ticket Status -->
-    <section id="ticketCharts" class="status-card mt-4">
-      <h3>📊 Ticket Status</h3>
+      <!-- Page Header -->
 
-      <!-- Search Ticket -->
-      <form method="POST" action="/donor_status" class="mb-4">
-        <div class="input-group">
-          <input type="text" class="form-control" name="ticket_id" placeholder="Enter Ticket ID" required>
-          <button type="submit" class="btn btn-danger">Check Status</button>
+      <div class="page-header">
+
+        <div class="status-chip">
+
+          <i class="fa-solid fa-circle"></i>
+
+          LIVE DONOR NETWORK
+
         </div>
-      </form>
 
-      <div class="row">
-        <div class="col-md-6">
-          <canvas id="ticketsChart"></canvas>
-        </div>
-        <div class="col-md-6">
-          <canvas id="donorResponsesChart"></canvas>
-        </div>
-      </div>
+        <h1>Donor Dashboard</h1>
 
-      {% if request_data %}
-      <div class="mt-4">
-        <h5>📌 Request Info</h5>
-        <p><b>Requester:</b> {{ request_data.requester_name }}</p>
-        <p><b>Blood Group:</b> {{ request_data.blood_group }}</p>
-        <p><b>Location:</b> {{ request_data.location }}</p>
-        <p><b>Status:</b>
-          {% if request_data.status == "CLOSED" %}
-            <span class="badge bg-danger">Closed</span>
-          {% else %}
-            <span class="badge bg-success">Open</span>
-          {% endif %}
+        <p>
+          Monitor donor activity, blood requests and ticket status
+          through the RaktDhara network.
         </p>
 
-        <!-- ✅ Close Ticket Button -->
-        {% if request_data.status != "CLOSED" %}
-        <form method="POST" action="/close_ticket">
-          <input type="hidden" name="ticket_id" value="{{ request_data.ticket_id }}">
-          <button type="submit" class="btn btn-sm btn-danger mt-2">
-            <i class="fa fa-times"></i> Close Ticket
-          </button>
-        </form>
-        {% endif %}
       </div>
-      {% elif error %}
-      <div class="alert alert-danger mt-3">{{ error }}</div>
-      {% endif %}
-    </section>
+
+
+      <!-- =====================================================
+           DONOR PORTAL
+      ====================================================== -->
+
+      <section
+        id="donorStats"
+        class="dashboard-card"
+      >
+
+        <div class="section-title">
+
+          <i class="fa-solid fa-users"></i>
+
+          Donor Portal Overview
+
+        </div>
+
+
+        <div class="row g-3">
+
+
+          <!-- Total Donors -->
+
+          <div class="col-md-4">
+
+            <div class="stat-box">
+
+              <div class="stat-icon cyan">
+
+                <i class="fa-solid fa-users"></i>
+
+              </div>
+
+              <div class="stat-number">
+                {{ total_donors }}
+              </div>
+
+              <p class="stat-label">
+                Total Donors
+              </p>
+
+            </div>
+
+          </div>
+
+
+          <!-- Total Requests -->
+
+          <div class="col-md-4">
+
+            <div class="stat-box">
+
+              <div class="stat-icon green">
+
+                <i class="fa-solid fa-envelope-open-text"></i>
+
+              </div>
+
+              <div class="stat-number">
+                {{ total_requests }}
+              </div>
+
+              <p class="stat-label">
+                Total Requests
+              </p>
+
+            </div>
+
+          </div>
+
+
+          <!-- Successful Donations -->
+
+          <div class="col-md-4">
+
+            <div class="stat-box">
+
+              <div class="stat-icon">
+
+                <i class="fa-solid fa-heart-pulse"></i>
+
+              </div>
+
+              <div class="stat-number">
+                {{ successful_donations }}
+              </div>
+
+              <p class="stat-label">
+                Successful Donations
+              </p>
+
+            </div>
+
+          </div>
+
+        </div>
+
+      </section>
+
+
+      <!-- =====================================================
+           STAR DONORS
+      ====================================================== -->
+
+      <section
+        id="starDonors"
+        class="dashboard-card"
+      >
+
+        <div class="section-title">
+
+          <i class="fa-solid fa-star"></i>
+
+          Star Donors
+
+        </div>
+
+
+        <div class="row g-3">
+
+          {% if star_donors %}
+
+            {% for donor in star_donors %}
+
+              <div class="col-6 col-md-3">
+
+                <div class="star-card">
+
+                  <i class="fa-solid fa-star star-icon"></i>
+
+                  <h5>
+                    {{ donor.name }}
+                  </h5>
+
+                  <span class="blood-badge">
+                    {{ donor.blood_group }}
+                  </span>
+
+                </div>
+
+              </div>
+
+            {% endfor %}
+
+          {% else %}
+
+            <div class="col-12">
+
+              <p class="text-center mb-0"
+                 style="color:var(--muted);font-size:.75rem;">
+
+                <i class="fa-solid fa-circle-info me-1"></i>
+
+                No Star Donors yet.
+
+              </p>
+
+            </div>
+
+          {% endif %}
+
+        </div>
+
+      </section>
+
+
+      <!-- =====================================================
+           TICKET STATUS
+      ====================================================== -->
+
+      <div id="chartData"
+           data-open-tickets="{{ open_tickets|default(0)|int }}"
+           data-closed-tickets="{{ closed_tickets|default(0)|int }}"
+           data-yes-responses="{{ yes_responses|default(0)|int }}"
+           data-no-responses="{{ no_responses|default(0)|int }}"
+           hidden></div>
+
+      <section
+        id="ticketCharts"
+        class="dashboard-card"
+      >
+
+        <div class="section-title">
+
+          <i class="fa-solid fa-chart-pie"></i>
+
+          Ticket Status
+
+        </div>
+
+
+        <!-- Ticket Search -->
+
+        <form
+          method="POST"
+          action="/donor_status"
+          class="ticket-form"
+        >
+
+          <div class="input-group">
+
+            <input
+              type="text"
+              class="form-control ticket-input"
+              name="ticket_id"
+              placeholder="Enter Ticket ID"
+              autocomplete="off"
+              required
+            >
+
+            <button
+              type="submit"
+              class="ticket-button"
+            >
+              <i class="fa-solid fa-magnifying-glass me-1"></i>
+              Check Status
+            </button>
+
+          </div>
+
+        </form>
+
+
+        <!-- Charts -->
+
+        <div class="row g-3">
+
+          <div class="col-md-6">
+
+            <div class="chart-box">
+
+              <canvas id="ticketsChart"></canvas>
+
+            </div>
+
+          </div>
+
+
+          <div class="col-md-6">
+
+            <div class="chart-box">
+
+              <canvas id="donorResponsesChart"></canvas>
+
+            </div>
+
+          </div>
+
+        </div>
+
+
+        <!-- ===================================================
+             REQUEST INFORMATION
+        ==================================================== -->
+
+        {% if request_data %}
+
+          <div class="request-info">
+
+            <div class="request-info-title">
+
+              <i class="fa-solid fa-file-circle-check me-2"
+                 style="color:var(--blood-light);"></i>
+
+              Request Information
+
+            </div>
+
+
+            <div class="info-row">
+
+              <span class="info-label">
+                Requester
+              </span>
+
+              <span class="info-value">
+                {{ request_data.requester_name }}
+              </span>
+
+            </div>
+
+
+            <div class="info-row">
+
+              <span class="info-label">
+                Blood Group
+              </span>
+
+              <span class="info-value">
+                {{ request_data.blood_group }}
+              </span>
+
+            </div>
+
+
+            <div class="info-row">
+
+              <span class="info-label">
+                Location
+              </span>
+
+              <span class="info-value">
+                {{ request_data.location }}
+              </span>
+
+            </div>
+
+
+            <div class="info-row">
+
+              <span class="info-label">
+                Status
+              </span>
+
+              <span class="info-value">
+
+                {% if request_data.status == "CLOSED" %}
+
+                  <span class="status-closed">
+                    <i class="fa-solid fa-lock me-1"></i>
+                    Closed
+                  </span>
+
+                {% else %}
+
+                  <span class="status-open">
+                    <i class="fa-solid fa-circle-check me-1"></i>
+                    Open
+                  </span>
+
+                {% endif %}
+
+              </span>
+
+            </div>
+
+
+            <!-- Close Ticket -->
+
+            {% if request_data.status != "CLOSED" %}
+
+              <form
+                method="POST"
+                action="/close_ticket"
+              >
+
+                <input
+                  type="hidden"
+                  name="ticket_id"
+                  value="{{ request_data.ticket_id }}"
+                >
+
+                <button
+                  type="submit"
+                  class="close-ticket"
+                >
+
+                  <i class="fa-solid fa-xmark me-1"></i>
+
+                  Close Ticket
+
+                </button>
+
+              </form>
+
+            {% endif %}
+
+          </div>
+
+        {% elif error %}
+
+          <div class="alert error-alert mt-4">
+
+            <i class="fa-solid fa-triangle-exclamation me-2"></i>
+
+            {{ error }}
+
+          </div>
+
+        {% endif %}
+
+      </section>
+
+    </div>
+
   </main>
 
-  <!-- Footer -->
+
+  <!-- =======================================================
+       FOOTER
+  ======================================================== -->
+
   <footer>
+
     <div class="container">
-      <small>&copy; 2025 Raktadhara. All rights reserved.</small>
+
+      <div>
+        <strong>RaktDhara</strong>
+        — Blood Donation & Request Network
+      </div>
+
+      <div class="mt-1">
+        &copy; 2026 RaktDhara. All rights reserved.
+      </div>
+
     </div>
+
   </footer>
 
-  <!-- Scripts -->
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  <!-- =======================================================
+       CHARTS
+  ======================================================== -->
+
   <script>
-    // Open vs Closed Tickets Chart
-    const ctx1 = document.getElementById('ticketsChart').getContext('2d');
-    new Chart(ctx1, {
-      type: 'doughnut',
-      data: {
-        labels: ['Open Tickets', 'Closed Tickets'],
-        datasets: [{
-          data: [{{ open_tickets }}, {{ closed_tickets }}],
-          backgroundColor: ['#ffc107', '#dc3545']
-        }]
-      },
-      options: {
-        responsive: true,
-        animation: { animateScale: true, animateRotate: true },
-        plugins: { legend: { position: 'bottom' } }
+    (() => {
+      "use strict";
+
+      /* =========================================================
+         RAKTADHARA — PRO DASHBOARD ENGINE
+      ========================================================= */
+
+      const $ = (selector, root = document) => root.querySelector(selector);
+
+      const chartData = $("#chartData");
+      const number = (key) => {
+        const value = Number(chartData?.dataset?.[key] ?? 0);
+        return Number.isFinite(value) && value >= 0 ? value : 0;
+      };
+
+      const chartValues = {
+        openTickets: number("openTickets"),
+        closedTickets: number("closedTickets"),
+        yesResponses: number("yesResponses"),
+        noResponses: number("noResponses")
+      };
+
+      /* -------------------------------------------------------
+         Animated number counters
+      ------------------------------------------------------- */
+
+      function animateCounter(element) {
+        if (!element) return;
+
+        const raw = element.textContent.trim().replace(/,/g, "");
+        const target = Number(raw);
+
+        if (!Number.isFinite(target)) return;
+
+        const duration = 1100;
+        const start = performance.now();
+
+        function tick(now) {
+          const progress = Math.min((now - start) / duration, 1);
+          const eased = 1 - Math.pow(1 - progress, 3);
+          element.textContent = Math.round(target * eased).toLocaleString();
+
+          if (progress < 1) {
+            requestAnimationFrame(tick);
+          }
+        }
+
+        element.textContent = "0";
+        requestAnimationFrame(tick);
       }
-    });
 
-    // Donor Responses Chart
-    const ctx2 = document.getElementById('donorResponsesChart').getContext('2d');
-    new Chart(ctx2, {
-      type: 'pie',
-      data: {
-        labels: ['Responded YES', 'Responded NO'],
-        datasets: [{
-          data: [{{ yes_responses }}, {{ no_responses }}],
-          backgroundColor: ['#28a745', '#6c757d']
-        }]
-      },
-      options: {
-        responsive: true,
-        animation: { animateScale: true, animateRotate: true },
-        plugins: { legend: { position: 'bottom' } }
+      document.querySelectorAll(".stat-number").forEach(animateCounter);
+
+      /* -------------------------------------------------------
+         Chart Defaults
+      ------------------------------------------------------- */
+
+      if (window.Chart) {
+        Chart.defaults.font.family = "Montserrat";
+        Chart.defaults.font.size = 11;
+        Chart.defaults.color = "#9aa6b2";
+        Chart.defaults.animation.duration = 1200;
+        Chart.defaults.animation.easing = "easeOutQuart";
       }
-    });
-  
 
-  // Multi-step donor registration navigation
-  const regSteps = document.querySelectorAll('#donorRegisterForm .step');
-  let regStep = 0;
+      /* -------------------------------------------------------
+         Open vs Closed Tickets
+      ------------------------------------------------------- */
 
-  function updateSteps() {
-    regSteps.forEach((step, i) => {
-      step.classList.remove('active', 'prev');
-      if (i === regStep) step.classList.add('active');
-      else if (i < regStep) step.classList.add('prev');
-    });
-  }
+      const ticketsCanvas = $("#ticketsChart");
 
-  document.querySelectorAll('#donorRegisterForm .next').forEach(btn=>{
-    btn.addEventListener('click', ()=>{
-      if(regStep < regSteps.length-1){
-        regStep++;
-        updateSteps();
+      if (ticketsCanvas && window.Chart) {
+        new Chart(ticketsCanvas, {
+          type: "doughnut",
+          data: {
+            labels: ["Open Tickets", "Closed Tickets"],
+            datasets: [{
+              data: [
+                chartValues.openTickets,
+                chartValues.closedTickets
+              ],
+              backgroundColor: ["#ffc107", "#d90429"],
+              borderColor: "#0d1219",
+              borderWidth: 3,
+              hoverOffset: 12,
+              spacing: 3
+            }]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            cutout: "66%",
+            animation: {
+              animateScale: true,
+              animateRotate: true,
+              duration: 1500,
+              easing: "easeOutQuart"
+            },
+            plugins: {
+              legend: {
+                position: "bottom",
+                labels: {
+                  padding: 18,
+                  usePointStyle: true,
+                  pointStyle: "circle"
+                }
+              },
+              tooltip: {
+                padding: 12,
+                displayColors: true
+              }
+            }
+          }
+        });
       }
-    });
-  });
 
-  document.querySelectorAll('#donorRegisterForm .prev').forEach(btn=>{
-    btn.addEventListener('click', ()=>{
-      if(regStep > 0){
-        regStep--;
-        updateSteps();
+      /* -------------------------------------------------------
+         Donor Responses
+      ------------------------------------------------------- */
+
+      const responsesCanvas = $("#donorResponsesChart");
+
+      if (responsesCanvas && window.Chart) {
+        new Chart(responsesCanvas, {
+          type: "pie",
+          data: {
+            labels: ["Responded YES", "Responded NO"],
+            datasets: [{
+              data: [
+                chartValues.yesResponses,
+                chartValues.noResponses
+              ],
+              backgroundColor: ["#35d07f", "#68737d"],
+              borderColor: "#0d1219",
+              borderWidth: 3,
+              hoverOffset: 12,
+              spacing: 3
+            }]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            animation: {
+              animateScale: true,
+              animateRotate: true,
+              duration: 1500,
+              easing: "easeOutQuart"
+            },
+            plugins: {
+              legend: {
+                position: "bottom",
+                labels: {
+                  padding: 18,
+                  usePointStyle: true,
+                  pointStyle: "circle"
+                }
+              },
+              tooltip: {
+                padding: 12,
+                displayColors: true
+              }
+            }
+          }
+        });
       }
-    });
-  });
 
-  updateSteps();
-</script>
+      /* -------------------------------------------------------
+         Scroll reveal
+      ------------------------------------------------------- */
+
+      const revealTargets = document.querySelectorAll(
+        ".dashboard-card, .stat-box, .star-card"
+      );
+
+      if ("IntersectionObserver" in window) {
+        const observer = new IntersectionObserver((entries, obs) => {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+              entry.target.classList.add("visible");
+              obs.unobserve(entry.target);
+            }
+          });
+        }, { threshold: 0.12 });
+
+        revealTargets.forEach((element, index) => {
+          element.classList.add("reveal");
+          element.style.transitionDelay = `${Math.min(index * 45, 300)}ms`;
+          observer.observe(element);
+        });
+      }
+
+      /* -------------------------------------------------------
+         Navbar scroll state
+      ------------------------------------------------------- */
+
+      const topbar = $(".topbar");
+
+      const updateNavbar = () => {
+        topbar?.classList.toggle("scrolled", window.scrollY > 12);
+      };
+
+      updateNavbar();
+      window.addEventListener("scroll", updateNavbar, { passive: true });
+
+      /* -------------------------------------------------------
+         Ripple effect
+      ------------------------------------------------------- */
+
+      document.querySelectorAll(".nav-btn, .ticket-button, .close-ticket").forEach((button) => {
+        button.addEventListener("click", (event) => {
+          const rect = button.getBoundingClientRect();
+          const size = Math.max(rect.width, rect.height);
+
+          const ripple = document.createElement("span");
+          ripple.className = "ripple";
+          ripple.style.width = `${size}px`;
+          ripple.style.height = `${size}px`;
+          ripple.style.left = `${event.clientX - rect.left - size / 2}px`;
+          ripple.style.top = `${event.clientY - rect.top - size / 2}px`;
+
+          button.appendChild(ripple);
+          setTimeout(() => ripple.remove(), 700);
+        });
+      });
+
+      /* -------------------------------------------------------
+         Falling blood particles — throttled and motion-aware
+      ------------------------------------------------------- */
+
+      const reducedMotion = window.matchMedia(
+        "(prefers-reduced-motion: reduce)"
+      ).matches;
+
+      function createBloodDrop() {
+        if (reducedMotion || document.hidden) return;
+
+        const drop = document.createElement("div");
+        drop.className = "blood-drop";
+
+        const size = 3 + Math.random() * 4;
+
+        drop.style.left = `${Math.random() * window.innerWidth}px`;
+        drop.style.width = `${size}px`;
+        drop.style.height = `${size * 2.2}px`;
+        drop.style.animationDuration = `${3 + Math.random() * 4}s`;
+        drop.style.animationDelay = `${Math.random() * .4}s`;
+
+        document.body.appendChild(drop);
+
+        setTimeout(() => drop.remove(), 8000);
+      }
+
+      if (!reducedMotion) {
+        setInterval(createBloodDrop, 700);
+      }
+
+      /* -------------------------------------------------------
+         Ticket input polish
+      ------------------------------------------------------- */
+
+      const ticketInput = $(".ticket-input");
+
+      ticketInput?.addEventListener("input", () => {
+        ticketInput.value = ticketInput.value
+          .replace(/\s+/g, "")
+          .slice(0, 64);
+      });
+
+      /* -------------------------------------------------------
+         Prevent accidental double-submit
+      ------------------------------------------------------- */
+
+      const ticketForm = $(".ticket-form");
+
+      ticketForm?.addEventListener("submit", () => {
+        const button = $(".ticket-button", ticketForm);
+        if (!button) return;
+
+        button.disabled = true;
+        button.innerHTML =
+          '<i class="fa-solid fa-circle-notch fa-spin me-1"></i> Checking...';
+      });
+
+      /* -------------------------------------------------------
+         Close-ticket confirmation
+      ------------------------------------------------------- */
+
+      document.querySelectorAll(".close-ticket").forEach((button) => {
+        button.closest("form")?.addEventListener("submit", (event) => {
+          if (!window.confirm("Are you sure you want to close this ticket?")) {
+            event.preventDefault();
+          }
+        });
+      });
+
+    })();
+  </script>
+
+  <!-- Bootstrap JS -->
+
+  <script
+    src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js">
+  </script>
 
 </body>
 </html>

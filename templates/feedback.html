@@ -1,12 +1,16 @@
 <!doctype html>
 <html lang="en">
 <head>
+  <link rel="icon" type="image/x-icon"
+      href="{{ url_for('static', filename='logo_circular.ico') }}">
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <meta name="theme-color" content="#070b12"/>
+
   <title>RaktDhara — Feedback</title>
 
-  <!-- Google font -->
-  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;600;700;900&display=swap" rel="stylesheet">
+  <!-- Google Font -->
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
 
   <!-- Bootstrap -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -15,150 +19,1434 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
   <style>
-:root {
-  --bg:#07121a;
-  --card:#071821;
-  --muted:#9aa6ab;
-  --teal:#00b3b3;
-  --blood:#c80f2e;
-}
+    :root {
+      --bg: #070b12;
+      --bg2: #0b111a;
+      --card: rgba(15, 22, 32, 0.82);
+      --card-border: rgba(255,255,255,0.08);
 
-body {
-  margin:0;
-  font-family:'Montserrat',sans-serif;
-  background: linear-gradient(180deg,#07121a 0%, #041119 100%);
-  color:#e9f7f7;
-  display:flex;
-  flex-direction:column;
-  min-height:100vh;
-}
-.content { flex:1; }
-html { scroll-behavior: smooth; }
+      --blood: #e21b3c;
+      --blood-dark: #a90f2b;
+      --blood-light: #ff5570;
 
-.topbar {
-  background: rgba(2,10,12,.55);
-  backdrop-filter: blur(6px);
-  border-bottom: 1px solid rgba(255,255,255,0.04);
-  padding:12px 0;
-  position:sticky;
-  top:0;
-  z-index:40;
-}
-.brand-row { display:flex; align-items:center; gap:12px; }
-.brand-logo { width:80px; height:80px; border-radius:50%; object-fit:cover; }
-.brand-title { font-weight:800; font-size:1.15rem; color:#ffffff }
-.brand-title .rakt {color:#fff;}
-.brand-title .dhara {color:var(--blood)}
+      --cyan: #12d9ff;
+      --text: #f4f8fb;
+      --muted: #8995a3;
 
-.page-hero {
-  padding:60px 0;
-  text-align:center;
-}
-.page-hero h1 {
-  font-weight:900;
-  font-size:2.5rem;
-  margin-bottom:10px;
-}
-.page-hero p { color:var(--muted); font-size:1.1rem; }
+      --success: #20d39b;
+    }
 
-.card-panel {
-  background: linear-gradient(180deg, rgba(6,18,23,.9), rgba(8,20,25,.85));
-  border-radius:16px;
-  padding:26px;
-  border:1px solid rgba(255,255,255,0.04);
-  box-shadow: 0 18px 50px rgba(0,0,0,.6);
-}
-.form-title { color:var(--blood); font-weight:800; margin-bottom:8px; }
-.form-sub { color:var(--muted); margin-bottom:18px; }
-.form-control {
-  background: rgba(255,255,255,0.03);
-  color:#eaf6f6;
-  border:1px solid rgba(255,255,255,0.06);
-  border-radius:10px;
-  padding:.65rem .9rem;
-}
-.form-control::placeholder { color:#9fb1b7 }
-.submit-btn {
-  background: linear-gradient(90deg,var(--blood), #ff6b88);
-  border:none;
-  color:#fff;
-  font-weight:800;
-  padding:.85rem;
-  border-radius:12px;
-  box-shadow:0 10px 28px rgba(200,15,46,.25);
-}
-footer {
-  background:#041119;
-  padding:30px 0;
-  border-top:1px solid rgba(255,255,255,0.08);
-  text-align:center;
-  color:var(--muted);
-  font-size:0.9rem;
-}
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: 'Montserrat', sans-serif;
+      color: var(--text);
+
+      background:
+        radial-gradient(circle at 10% 10%, rgba(226,27,60,.13), transparent 28%),
+        radial-gradient(circle at 90% 75%, rgba(18,217,255,.08), transparent 30%),
+        linear-gradient(135deg, #070b12 0%, #09121b 50%, #050910 100%);
+
+      overflow-x: hidden;
+    }
+
+    /* =========================================================
+       ANIMATED BACKGROUND
+       ========================================================= */
+
+    .tech-grid {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      opacity: .15;
+      background-image:
+        linear-gradient(rgba(255,255,255,.035) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,.035) 1px, transparent 1px);
+      background-size: 55px 55px;
+      mask-image: linear-gradient(to bottom, black, transparent);
+      z-index: 0;
+    }
+
+    .ambient {
+      position: fixed;
+      width: 420px;
+      height: 420px;
+      border-radius: 50%;
+      filter: blur(100px);
+      pointer-events: none;
+      opacity: .13;
+      z-index: 0;
+      animation: ambientMove 10s ease-in-out infinite alternate;
+    }
+
+    .ambient-red {
+      background: var(--blood);
+      left: -180px;
+      top: 120px;
+    }
+
+    .ambient-cyan {
+      background: var(--cyan);
+      right: -180px;
+      bottom: 60px;
+      animation-delay: -4s;
+    }
+
+    @keyframes ambientMove {
+      0% {
+        transform: translate(0,0) scale(1);
+      }
+      100% {
+        transform: translate(45px,-30px) scale(1.15);
+      }
+    }
+
+    /* =========================================================
+       BLOOD PARTICLES
+       ========================================================= */
+
+    .blood-drop {
+      position: fixed;
+      top: -40px;
+      width: 8px;
+      height: 14px;
+
+      background: linear-gradient(
+        145deg,
+        #ff4967,
+        #a90027
+      );
+
+      border-radius:
+        65% 65% 55% 55% /
+        75% 75% 45% 45%;
+
+      opacity: 0;
+      pointer-events: none;
+
+      box-shadow:
+        0 0 12px rgba(226,27,60,.4);
+
+      z-index: 2;
+
+      animation: bloodFall linear forwards;
+    }
+
+    @keyframes bloodFall {
+
+      0% {
+        transform:
+          translate3d(0,-30px,0)
+          rotate(0deg);
+        opacity: 0;
+      }
+
+      12% {
+        opacity: .8;
+      }
+
+      90% {
+        opacity: .35;
+      }
+
+      100% {
+        transform:
+          translate3d(80px,110vh,0)
+          rotate(180deg);
+        opacity: 0;
+      }
+    }
+
+    /* =========================================================
+       NAVBAR
+       ========================================================= */
+
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+
+      background: rgba(5,9,15,.78);
+      backdrop-filter: blur(18px);
+
+      border-bottom:
+        1px solid rgba(255,255,255,.07);
+
+      box-shadow:
+        0 8px 35px rgba(0,0,0,.25);
+    }
+
+    .navbar-inner {
+      min-height: 82px;
+    }
+
+    .brand-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      text-decoration: none;
+    }
+
+    .brand-logo {
+      width: 58px;
+      height: 58px;
+      object-fit: cover;
+      border-radius: 50%;
+
+      border: 2px solid rgba(18,217,255,.45);
+
+      box-shadow:
+        0 0 20px rgba(18,217,255,.12);
+    }
+
+    .brand-title {
+      font-size: 1.15rem;
+      font-weight: 900;
+      letter-spacing: -.3px;
+    }
+
+    .brand-title .rakt {
+      color: #fff;
+    }
+
+    .brand-title .dhara {
+      color: var(--blood-light);
+    }
+
+    .brand-subtitle {
+      font-size: .68rem;
+      color: var(--muted);
+      letter-spacing: 1.3px;
+      text-transform: uppercase;
+    }
+
+    .nav-btn {
+      border-radius: 9px;
+      font-size: .78rem;
+      font-weight: 700;
+      margin-left: 7px;
+      transition: .25s ease;
+    }
+
+    .nav-btn:hover {
+      transform: translateY(-2px);
+    }
+
+    /* =========================================================
+       HERO
+       ========================================================= */
+
+    .hero {
+      position: relative;
+      z-index: 5;
+
+      text-align: center;
+
+      padding:
+        75px 20px
+        45px;
+    }
+
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+
+      padding: 7px 14px;
+
+      border-radius: 30px;
+
+      background: rgba(18,217,255,.06);
+
+      border:
+        1px solid rgba(18,217,255,.18);
+
+      color: #9beeff;
+
+      font-size: .7rem;
+      font-weight: 700;
+
+      letter-spacing: 1.2px;
+      text-transform: uppercase;
+
+      margin-bottom: 20px;
+    }
+
+    .live-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--success);
+
+      box-shadow:
+        0 0 10px rgba(32,211,155,.8);
+
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+      0%,100% {
+        opacity: 1;
+        transform: scale(1);
+      }
+
+      50% {
+        opacity: .4;
+        transform: scale(.7);
+      }
+    }
+
+    .hero h1 {
+      font-size: clamp(2rem,5vw,3.3rem);
+      font-weight: 900;
+
+      margin: 0;
+
+      letter-spacing: -1.5px;
+
+      background:
+        linear-gradient(
+          90deg,
+          #fff,
+          #dcecf2,
+          var(--blood-light)
+        );
+
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+
+      animation: heroEntry .8s ease both;
+    }
+
+    .hero p {
+      max-width: 680px;
+      margin: 15px auto 0;
+
+      color: var(--muted);
+
+      font-size: .98rem;
+      line-height: 1.8;
+
+      animation: heroEntry .9s ease both;
+    }
+
+    @keyframes heroEntry {
+      from {
+        opacity: 0;
+        transform: translateY(18px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    /* =========================================================
+       MAIN FEEDBACK PANEL
+       ========================================================= */
+
+    .feedback-wrapper {
+      position: relative;
+      z-index: 10;
+
+      max-width: 920px;
+
+      margin:
+        0 auto
+        70px;
+
+      padding: 0 20px;
+    }
+
+    .feedback-card {
+      display: grid;
+      grid-template-columns: .85fr 1.4fr;
+
+      overflow: hidden;
+
+      background:
+        linear-gradient(
+          145deg,
+          rgba(16,24,35,.92),
+          rgba(9,15,23,.88)
+        );
+
+      border:
+        1px solid var(--card-border);
+
+      border-radius: 24px;
+
+      box-shadow:
+        0 30px 90px rgba(0,0,0,.45),
+        0 0 50px rgba(18,217,255,.035);
+
+      backdrop-filter: blur(20px);
+
+      animation:
+        cardEntry .75s
+        cubic-bezier(.2,.8,.2,1)
+        both;
+    }
+
+    @keyframes cardEntry {
+      from {
+        opacity: 0;
+        transform:
+          translateY(30px)
+          scale(.97);
+      }
+
+      to {
+        opacity: 1;
+        transform:
+          translateY(0)
+          scale(1);
+      }
+    }
+
+    /* =========================================================
+       LEFT INFORMATION PANEL
+       ========================================================= */
+
+    .feedback-info {
+      padding: 42px 34px;
+
+      background:
+        linear-gradient(
+          145deg,
+          rgba(226,27,60,.13),
+          rgba(18,217,255,.035)
+        );
+
+      border-right:
+        1px solid rgba(255,255,255,.07);
+    }
+
+    .info-icon {
+      width: 58px;
+      height: 58px;
+
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      border-radius: 16px;
+
+      background:
+        linear-gradient(
+          135deg,
+          var(--blood),
+          var(--blood-dark)
+        );
+
+      font-size: 1.35rem;
+
+      box-shadow:
+        0 12px 30px rgba(226,27,60,.22);
+
+      margin-bottom: 25px;
+    }
+
+    .feedback-info h2 {
+      font-size: 1.45rem;
+      font-weight: 800;
+      margin-bottom: 12px;
+    }
+
+    .feedback-info > p {
+      color: var(--muted);
+      font-size: .83rem;
+      line-height: 1.8;
+    }
+
+    .feature {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+
+      margin-top: 24px;
+    }
+
+    .feature-icon {
+      min-width: 34px;
+      height: 34px;
+
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      border-radius: 9px;
+
+      background: rgba(18,217,255,.08);
+
+      color: var(--cyan);
+
+      font-size: .78rem;
+    }
+
+    .feature strong {
+      display: block;
+
+      font-size: .77rem;
+      margin-bottom: 3px;
+    }
+
+    .feature span {
+      color: var(--muted);
+      font-size: .68rem;
+      line-height: 1.5;
+    }
+
+    /* =========================================================
+       FORM
+       ========================================================= */
+
+    .feedback-form {
+      padding: 42px;
+    }
+
+    .form-heading {
+      margin-bottom: 25px;
+    }
+
+    .form-heading h3 {
+      font-size: 1.25rem;
+      font-weight: 800;
+      margin-bottom: 5px;
+    }
+
+    .form-heading p {
+      margin: 0;
+      color: var(--muted);
+      font-size: .75rem;
+    }
+
+    .field-label {
+      display: block;
+
+      color: #c9d3da;
+
+      font-size: .72rem;
+      font-weight: 700;
+
+      margin-bottom: 7px;
+    }
+
+    .form-control,
+    .form-select {
+      min-height: 47px;
+
+      background:
+        rgba(255,255,255,.035);
+
+      color: #eef7fa;
+
+      border:
+        1px solid rgba(255,255,255,.08);
+
+      border-radius: 11px;
+
+      padding:
+        11px 14px;
+
+      font-size: .78rem;
+
+      transition: .25s ease;
+    }
+
+    .form-control::placeholder {
+      color: #64717e;
+    }
+
+    .form-control:hover,
+    .form-select:hover {
+      border-color:
+        rgba(18,217,255,.25);
+    }
+
+    .form-control:focus,
+    .form-select:focus {
+      color: #fff;
+
+      background:
+        rgba(255,255,255,.045);
+
+      border-color:
+        var(--cyan);
+
+      box-shadow:
+        0 0 0 3px
+        rgba(18,217,255,.08);
+
+      outline: none;
+    }
+
+    .form-select option {
+      background: #101820;
+      color: #fff;
+    }
+
+    textarea.form-control {
+      min-height: 145px;
+      resize: vertical;
+    }
+
+    /* =========================================================
+       STAR RATING
+       ========================================================= */
+
+    .rating-box {
+      display: flex;
+      flex-direction: row-reverse;
+      justify-content: flex-end;
+      gap: 5px;
+    }
+
+    .rating-box input {
+      display: none;
+    }
+
+    .rating-box label {
+      cursor: pointer;
+
+      font-size: 1.35rem;
+
+      color: #3c4752;
+
+      transition:
+        color .2s ease,
+        transform .2s ease;
+    }
+
+    .rating-box label:hover,
+    .rating-box label:hover ~ label,
+    .rating-box input:checked ~ label {
+      color: #ffc107;
+
+      transform:
+        scale(1.08);
+    }
+
+    .rating-text {
+      margin-top: 5px;
+
+      color: #64717e;
+
+      font-size: .65rem;
+    }
+
+    /* =========================================================
+       CHARACTER COUNTER
+       ========================================================= */
+
+    .message-meta {
+      display: flex;
+      justify-content: flex-end;
+
+      color: #687580;
+
+      font-size: .62rem;
+
+      margin-top: 5px;
+    }
+
+    /* =========================================================
+       SUBMIT BUTTON
+       ========================================================= */
+
+    .submit-btn {
+      position: relative;
+
+      width: 100%;
+      min-height: 50px;
+
+      border: none;
+      border-radius: 12px;
+
+      background:
+        linear-gradient(
+          100deg,
+          #c70f30,
+          #e21b3c,
+          #ff5570
+        );
+
+      color: #fff;
+
+      font-size: .8rem;
+      font-weight: 800;
+
+      letter-spacing: .3px;
+
+      overflow: hidden;
+
+      box-shadow:
+        0 12px 30px
+        rgba(226,27,60,.22);
+
+      transition: .25s ease;
+    }
+
+    .submit-btn::after {
+      content: "";
+
+      position: absolute;
+
+      top: 0;
+      left: -110%;
+
+      width: 55%;
+      height: 100%;
+
+      background:
+        linear-gradient(
+          90deg,
+          transparent,
+          rgba(255,255,255,.28),
+          transparent
+        );
+
+      transform: skewX(-20deg);
+
+      transition: left .6s ease;
+    }
+
+    .submit-btn:hover::after {
+      left: 140%;
+    }
+
+    .submit-btn:hover {
+      transform: translateY(-2px);
+
+      box-shadow:
+        0 16px 38px
+        rgba(226,27,60,.30);
+    }
+
+    .submit-btn:active {
+      transform: translateY(0);
+    }
+
+    /* =========================================================
+       FLASH MESSAGES - INLINE, NO POPUPS
+       ========================================================= */
+
+    .flash-message {
+      padding: 11px 14px;
+
+      margin-bottom: 20px;
+
+      border-radius: 10px;
+
+      font-size: .75rem;
+
+      border: 1px solid
+        rgba(255,255,255,.08);
+    }
+
+    /* =========================================================
+       FOOTER
+       ========================================================= */
+
+    footer {
+      position: relative;
+      z-index: 10;
+
+      border-top:
+        1px solid rgba(255,255,255,.07);
+
+      background:
+        rgba(3,7,12,.82);
+
+      padding: 28px 20px;
+
+      text-align: center;
+
+      color: #687580;
+
+      font-size: .68rem;
+    }
+
+    .footer-brand {
+      color: #dce8ed;
+      font-weight: 800;
+    }
+
+    .footer-brand span {
+      color: var(--blood-light);
+    }
+
+    /* =========================================================
+       MOBILE
+       ========================================================= */
+
+    @media (max-width: 850px) {
+
+      .feedback-card {
+        grid-template-columns: 1fr;
+      }
+
+      .feedback-info {
+        border-right: none;
+
+        border-bottom:
+          1px solid rgba(255,255,255,.07);
+      }
+
+      .feedback-form {
+        padding: 32px;
+      }
+
+      .nav-links {
+        display: none !important;
+      }
+    }
+
+    @media (max-width: 576px) {
+
+      .navbar-inner {
+        min-height: 70px;
+      }
+
+      .brand-logo {
+        width: 48px;
+        height: 48px;
+      }
+
+      .brand-title {
+        font-size: 1rem;
+      }
+
+      .brand-subtitle {
+        font-size: .57rem;
+      }
+
+      .hero {
+        padding:
+          55px 18px
+          35px;
+      }
+
+      .hero h1 {
+        font-size: 2rem;
+      }
+
+      .hero p {
+        font-size: .82rem;
+      }
+
+      .feedback-wrapper {
+        padding: 0 12px;
+      }
+
+      .feedback-info,
+      .feedback-form {
+        padding: 28px 22px;
+      }
+
+      .nav-btn {
+        margin-left: 3px;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+
+      *,
+      *::before,
+      *::after {
+        animation-duration: .01ms !important;
+        animation-iteration-count: 1 !important;
+      }
+    }
   </style>
 </head>
+
 <body>
 
-  <!-- Topbar -->
+  <!-- Background -->
+  <div class="tech-grid"></div>
+  <div class="ambient ambient-red"></div>
+  <div class="ambient ambient-cyan"></div>
+
+
+  <!-- =======================================================
+       NAVBAR
+       ======================================================= -->
+
   <header class="topbar">
-    <div class="container d-flex justify-content-between align-items-center">
-      <div class="brand-row">
-        <img src="{{ url_for('static', filename='images/logo.jpeg') }}" alt="Logo" class="brand-logo">
+
+    <div class="container navbar-inner d-flex justify-content-between align-items-center">
+
+      <a href="{{ url_for('home') }}" class="brand-row">
+
+        <img
+          src="{{ url_for('static', filename='images/logo.jpeg') }}"
+          alt="RaktDhara Logo"
+          class="brand-logo">
+
         <div>
-          <div class="brand-title"><span class="rakt">Rakt</span><span class="dhara">Dhara</span></div>
-          <div style="font-size:.85rem; color:var(--muted)">Donate • Save • Smile</div>
+          <div class="brand-title">
+            <span class="rakt">Rakt</span><span class="dhara">Dhara</span>
+          </div>
+
+          <div class="brand-subtitle">
+            Donate • Save • Smile
+          </div>
         </div>
+
+      </a>
+
+
+      <div class="nav-links d-none d-md-flex align-items-center">
+
+        <a
+          class="btn btn-outline-danger btn-sm nav-btn"
+          href="{{ url_for('home') }}">
+          <i class="fa-solid fa-house"></i>
+          Home
+        </a>
+
+        <a
+          class="btn btn-outline-info btn-sm nav-btn"
+          href="{{ url_for('login') }}">
+          <i class="fa-solid fa-user"></i>
+          User
+        </a>
+
+        <a
+          class="btn btn-outline-warning btn-sm nav-btn"
+          href="{{ url_for('admin_login') }}">
+          <i class="fa-solid fa-shield-halved"></i>
+          Admin
+        </a>
+
+        <a
+          class="btn btn-outline-success btn-sm nav-btn"
+          href="{{ url_for('donor_status') }}">
+          <i class="fa-solid fa-droplet"></i>
+          Donor Status
+        </a>
+
+        <a
+          class="btn btn-danger btn-sm nav-btn"
+          href="{{ url_for('feedback') }}">
+          <i class="fa-solid fa-comment-dots"></i>
+          Feedback
+        </a>
+
       </div>
-      <div class="d-none d-md-flex align-items-center">
-        <a class="btn btn-danger btn-sm ms-2" href="/">Home</a>
-        <a class="btn btn-danger btn-sm ms-2" href="/login">User</a>
-        <a class="btn btn-warning btn-sm ms-2" href="/admin">Admin</a>
-        <a class="btn btn-success btn-sm ms-2" href="/donor_status">Donor Status</a>
-        <a class="btn btn-success btn-sm ms-2" href="/feedback">Feedback</a>
-        <a class="btn btn-danger btn-sm ms-2" href="/#team">Our Team</a>
-      </div>
+
     </div>
+
   </header>
 
-  <!-- Hero Section -->
-  <section class="page-hero">
-    <div class="container">
-      <h1>We Value Your Feedback</h1>
-      <p>Your suggestions help us improve and save more lives ❤️</p>
+
+  <!-- =======================================================
+       HERO
+       ======================================================= -->
+
+  <section class="hero">
+
+    <div class="hero-badge">
+      <span class="live-dot"></span>
+      RaktDhara Improvement System
     </div>
+
+    <h1>We Value Your Feedback</h1>
+
+    <p>
+      Your experience helps us improve the technology,
+      usability and reliability of RaktDhara —
+      helping us connect donors and recipients faster.
+    </p>
+
   </section>
 
-  <!-- Feedback Form -->
-  <main class="content">
-    <div class="container" style="max-width:700px;">
-      <div class="card-panel">
-        <div class="form-title">Share Your Thoughts</div>
-        <div class="form-sub">Fill out the form below</div>
-        <form method="POST" action="/submit_feedback">
+
+  <!-- =======================================================
+       FEEDBACK
+       ======================================================= -->
+
+  <main class="feedback-wrapper">
+
+    <div class="feedback-card">
+
+
+      <!-- LEFT PANEL -->
+
+      <section class="feedback-info">
+
+        <div class="info-icon">
+          <i class="fa-solid fa-comments"></i>
+        </div>
+
+        <h2>
+          Help Us Build<br>
+          Better RaktDhara
+        </h2>
+
+        <p>
+          Tell us what worked, what didn't,
+          and what features you would like
+          to see in the future.
+        </p>
+
+
+        <div class="feature">
+
+          <div class="feature-icon">
+            <i class="fa-solid fa-bug"></i>
+          </div>
+
+          <div>
+            <strong>Report a Problem</strong>
+
+            <span>
+              Let us know about bugs,
+              errors or technical issues.
+            </span>
+          </div>
+
+        </div>
+
+
+        <div class="feature">
+
+          <div class="feature-icon">
+            <i class="fa-solid fa-lightbulb"></i>
+          </div>
+
+          <div>
+            <strong>Suggest an Idea</strong>
+
+            <span>
+              Recommend features that can
+              make blood donation easier.
+            </span>
+          </div>
+
+        </div>
+
+
+        <div class="feature">
+
+          <div class="feature-icon">
+            <i class="fa-solid fa-heart-pulse"></i>
+          </div>
+
+          <div>
+            <strong>Improve Lives</strong>
+
+            <span>
+              Your feedback contributes to a
+              faster and better donation network.
+            </span>
+          </div>
+
+        </div>
+
+      </section>
+
+
+      <!-- RIGHT FORM -->
+
+      <section class="feedback-form">
+
+        <div class="form-heading">
+
+          <h3>
+            Submit Your Feedback
+          </h3>
+
+          <p>
+            All fields marked with * are required.
+          </p>
+
+        </div>
+
+
+        <!-- Flask inline messages -->
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+
+          {% if messages %}
+
+            {% for category, message in messages %}
+
+              <div
+                class="flash-message alert alert-{{ category }}"
+                role="alert">
+
+                {{ message }}
+
+              </div>
+
+            {% endfor %}
+
+          {% endif %}
+
+        {% endwith %}
+
+
+        <form
+          method="POST"
+          action="{{ url_for('submit_feedback') }}"
+          autocomplete="on">
+
+
+          <!-- Name -->
+
           <div class="mb-3">
-            <input type="text" class="form-control" name="name" placeholder="Your Name" required>
+
+            <label class="field-label">
+              <i class="fa-solid fa-user"></i>
+              Full Name *
+            </label>
+
+            <input
+              type="text"
+              class="form-control"
+              name="name"
+              placeholder="Enter your name"
+              maxlength="100"
+              required>
+
           </div>
+
+
+          <!-- Email -->
+
           <div class="mb-3">
-            <input type="email" class="form-control" name="email" placeholder="Your Email" required>
+
+            <label class="field-label">
+              <i class="fa-solid fa-envelope"></i>
+              Email Address *
+            </label>
+
+            <input
+              type="email"
+              class="form-control"
+              name="email"
+              placeholder="Enter your email"
+              maxlength="100"
+              required>
+
           </div>
+
+
+          <!-- Category -->
+
           <div class="mb-3">
-            <textarea class="form-control" name="message" rows="5" placeholder="Your Feedback" required></textarea>
+
+            <label class="field-label">
+              <i class="fa-solid fa-layer-group"></i>
+              Feedback Type
+            </label>
+
+            <select
+              class="form-select"
+              name="feedback_type">
+
+              <option value="">
+                Select feedback type
+              </option>
+
+              <option value="Bug Report">
+                Bug / Technical Issue
+              </option>
+
+              <option value="Feature Request">
+                Feature Request
+              </option>
+
+              <option value="User Experience">
+                User Experience
+              </option>
+
+              <option value="Suggestion">
+                General Suggestion
+              </option>
+
+              <option value="Other">
+                Other
+              </option>
+
+            </select>
+
           </div>
-          <div class="d-grid">
-            <button type="submit" class="submit-btn">Submit Feedback</button>
+
+
+          <!-- Rating -->
+
+          <div class="mb-3">
+
+            <label class="field-label">
+              <i class="fa-solid fa-star"></i>
+              Rate Your Experience
+            </label>
+
+            <div class="rating-box">
+
+              <input
+                type="radio"
+                name="rating"
+                id="star5"
+                value="5">
+
+              <label for="star5">
+                <i class="fa-solid fa-star"></i>
+              </label>
+
+
+              <input
+                type="radio"
+                name="rating"
+                id="star4"
+                value="4">
+
+              <label for="star4">
+                <i class="fa-solid fa-star"></i>
+              </label>
+
+
+              <input
+                type="radio"
+                name="rating"
+                id="star3"
+                value="3">
+
+              <label for="star3">
+                <i class="fa-solid fa-star"></i>
+              </label>
+
+
+              <input
+                type="radio"
+                name="rating"
+                id="star2"
+                value="2">
+
+              <label for="star2">
+                <i class="fa-solid fa-star"></i>
+              </label>
+
+
+              <input
+                type="radio"
+                name="rating"
+                id="star1"
+                value="1">
+
+              <label for="star1">
+                <i class="fa-solid fa-star"></i>
+              </label>
+
+            </div>
+
+            <div class="rating-text">
+              Optional — select 1 to 5 stars
+            </div>
+
           </div>
+
+
+          <!-- Message -->
+
+          <div class="mb-3">
+
+            <label class="field-label">
+              <i class="fa-solid fa-message"></i>
+              Your Feedback *
+            </label>
+
+            <textarea
+              class="form-control"
+              name="message"
+              id="feedbackMessage"
+              rows="5"
+              maxlength="1000"
+              placeholder="Tell us about your experience..."
+              required></textarea>
+
+            <div class="message-meta">
+              <span id="characterCount">0 / 1000</span>
+            </div>
+
+          </div>
+
+
+          <!-- Submit -->
+
+          <button
+            type="submit"
+            class="submit-btn">
+
+            <i class="fa-solid fa-paper-plane"></i>
+            &nbsp; Submit Feedback
+
+          </button>
+
+
         </form>
-      </div>
+
+      </section>
+
     </div>
+
   </main>
 
-  <!-- Footer -->
+
+  <!-- =======================================================
+       FOOTER
+       ======================================================= -->
+
   <footer>
+
     <div class="container">
-      &copy; {{ current_year }} RaktDhara — All Rights Reserved
+
+      <div class="footer-brand">
+        Rakt<span>Dhara</span>
+      </div>
+
+      <div class="mt-1">
+        Donate • Save • Smile
+      </div>
+
+      <div class="mt-2">
+        &copy; {{ current_year }} RaktDhara — All Rights Reserved
+      </div>
+
     </div>
+
   </footer>
 
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+  <!-- =======================================================
+       ANIMATION SCRIPT
+       ======================================================= -->
+
+  <script>
+
+    /* Blood drops */
+
+    (() => {
+
+      const MAX_DROPS = 16;
+
+      let activeDrops = 0;
+
+
+      function createDrop() {
+
+        if (activeDrops >= MAX_DROPS) {
+          return;
+        }
+
+        const drop =
+          document.createElement("div");
+
+        drop.className =
+          "blood-drop";
+
+
+        const size =
+          6 + Math.random() * 7;
+
+        const duration =
+          4 + Math.random() * 5;
+
+        const delay =
+          Math.random() * .5;
+
+
+        drop.style.left =
+          Math.random() * 100 + "vw";
+
+        drop.style.width =
+          size + "px";
+
+        drop.style.height =
+          size * 1.45 + "px";
+
+        drop.style.animationDuration =
+          duration + "s";
+
+        drop.style.animationDelay =
+          delay + "s";
+
+
+        document.body.appendChild(drop);
+
+        activeDrops++;
+
+
+        setTimeout(() => {
+
+          drop.remove();
+
+          activeDrops--;
+
+        }, (duration + delay) * 1000 + 500);
+
+      }
+
+
+      for (let i = 0; i < 6; i++) {
+
+        setTimeout(
+          createDrop,
+          i * 500
+        );
+
+      }
+
+
+      setInterval(
+        createDrop,
+        700
+      );
+
+    })();
+
+
+    /* Character counter */
+
+    const message =
+      document.getElementById(
+        "feedbackMessage"
+      );
+
+    const counter =
+      document.getElementById(
+        "characterCount"
+      );
+
+
+    if (message && counter) {
+
+      message.addEventListener(
+        "input",
+        () => {
+
+          counter.textContent =
+            `${message.value.length} / 1000`;
+
+        }
+      );
+
+    }
+
+  </script>
+
 </body>
 </html>
